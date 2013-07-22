@@ -1,0 +1,92 @@
+﻿<ManagementPack xsi:noNamespaceSchemaLocation="..\..\..\..\..\Common\sdk\server\MPInfrastructure\schema\ManagementPackSchema.v1.1.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" SchemaVersion="1.1">
+  <Manifest>
+    <Identity>
+      <ID>DeviceProjectionMP</ID>
+      <Version>1.0.0.0</Version>
+    </Identity>
+    <Name>DeviceProjectionMP</Name>
+    <References>
+      <Reference Alias="System">
+        <ID>System.Library</ID>
+        <Version>1.0.0.0</Version>
+        <PublicKeyToken>9396306c2be7fcc4</PublicKeyToken>
+      </Reference>
+      <Reference Alias="Windows">
+        <ID>Microsoft.Windows.Library</ID>
+        <Version>1.0.0.0</Version>
+        <PublicKeyToken>9396306c2be7fcc4</PublicKeyToken>
+      </Reference>
+      <Reference Alias="SystemSoftLib">
+        <ID>System.Software.Library</ID>
+        <Version>1.0.0.0</Version>
+        <PublicKeyToken>9396306c2be7fcc4</PublicKeyToken>
+      </Reference>
+      <Reference Alias="Peripherals">
+        <ID>Microsoft.Windows.Peripheral.Library</ID>
+        <Version>1.0.0.0</Version>
+        <PublicKeyToken>9396306c2be7fcc4</PublicKeyToken>
+      </Reference>
+      <Reference Alias="ConfigurationManager">
+        <ID>Microsoft.SystemCenter.ConfigurationManager</ID>
+        <Version>1.0.0.0</Version>
+        <PublicKeyToken>9396306c2be7fcc4</PublicKeyToken>
+      </Reference>
+      <Reference Alias="SMCore">
+        <ID>ServiceManager.Core.Library</ID>
+        <Version>1.0.0.0</Version>
+        <PublicKeyToken>9396306c2be7fcc4</PublicKeyToken>
+      </Reference>
+      <Reference Alias="SMConsole">
+        <ID>Microsoft.EnterpriseManagement.ServiceManager.UI.Console</ID>
+        <Version>1.0.0.0</Version>
+        <PublicKeyToken>9396306c2be7fcc4</PublicKeyToken>
+      </Reference>
+      <Reference Alias="IncidentManagementLib">
+        <ID>ServiceManager.IncidentManagement.Library</ID>
+        <Version>1.0.0.0</Version>
+        <PublicKeyToken>9396306c2be7fcc4</PublicKeyToken>
+      </Reference>
+      <Reference Alias="ChangeManagementLib">
+        <ID>ServiceManager.ChangeManagement.Library</ID>
+        <Version>1.0.0.0</Version>
+        <PublicKeyToken>9396306c2be7fcc4</PublicKeyToken>
+      </Reference>
+      <Reference Alias="Authoring">
+        <ID>Microsoft.EnterpriseManagement.ServiceManager.UI.Authoring</ID>
+        <Version>1.0.0.0</Version>
+        <PublicKeyToken>9396306c2be7fcc4</PublicKeyToken>
+      </Reference>
+      <Reference Alias="Admin">
+        <ID>Microsoft.EnterpriseManagement.ServiceManager.UI.Administration</ID>
+        <Version>1.0.0.0</Version>
+        <PublicKeyToken>9396306c2be7fcc4</PublicKeyToken>
+      </Reference>
+      <Reference Alias="SupportingItem">
+        <ID>System.SupportingItem.Library</ID>
+        <Version>1.0.0.0</Version>
+        <PublicKeyToken>9396306c2be7fcc4</PublicKeyToken>
+      </Reference>
+      <Reference Alias="Notification">
+        <ID>System.Notifications.Library</ID>
+        <Version>1.0.0.0</Version>
+        <PublicKeyToken>9396306c2be7fcc4</PublicKeyToken>
+      </Reference>
+      <Reference Alias="CoreKnowledge">
+        <ID>System.Knowledge.Library</ID>
+        <Version>1.0.0.0</Version>
+        <PublicKeyToken>9396306c2be7fcc4</PublicKeyToken>
+      </Reference>
+    </References>
+  </Manifest>
+  <TypeDefinitions>
+    <EntityTypes>
+      <TypeProjections>
+        <TypeProjection ID="DeviceProjection" Accessibility="Public" Type="Windows!Microsoft.Windows.Computer">
+          <Component Alias="SoftwareInstalled" Path="$Context/Path[Relationship='SystemSoftLib!System.DeviceHasSoftwareItemInstalled']$" />
+          <Component Alias="SoftwareUpdate" Path="$Context/Path[Relationship='SystemSoftLib!System.DeviceHasSoftwareUpdateInstalled']$" />
+        </TypeProjection>
+      </TypeProjections>
+    </EntityTypes>
+  </TypeDefinitions>
+</ManagementPack>
+
