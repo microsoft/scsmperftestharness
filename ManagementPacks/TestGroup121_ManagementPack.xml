@@ -1,0 +1,1048 @@
+﻿<?xml version="1.0" encoding="utf-8"?><ManagementPack ContentReadable="true" SchemaVersion="2.0" OriginalSchemaVersion="1.1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <Manifest>
+    <Identity>
+      <ID>TestGroup121_ManagementPack</ID>
+      <Version>1.0.0.0</Version>
+    </Identity>
+    <Name>TestGroup121</Name>
+    <References>
+      <Reference Alias="System_Library">
+        <ID>System.Library</ID>
+        <Version>7.5.8501.0</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+      <Reference Alias="Microsoft_Windows_Library">
+        <ID>Microsoft.Windows.Library</ID>
+        <Version>7.5.8501.0</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+      <Reference Alias="Microsoft_SystemCenter_Library">
+        <ID>Microsoft.SystemCenter.Library</ID>
+        <Version>7.0.8427.0</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+      <Reference Alias="System_WorkItem_Incident_Library">
+        <ID>System.WorkItem.Incident.Library</ID>
+        <Version>7.5.1561.0</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+      <Reference Alias="Microsoft_SystemCenter_InstanceGroup_Library">
+        <ID>Microsoft.SystemCenter.InstanceGroup.Library</ID>
+        <Version>7.5.8501.0</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+      <Reference Alias="System_WorkItem_Library">
+        <ID>System.WorkItem.Library</ID>
+        <Version>7.5.1561.0</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+      <Reference Alias="System_WorkItem_Activity_Library">
+        <ID>System.WorkItem.Activity.Library</ID>
+        <Version>7.5.1561.0</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+      <Reference Alias="System_Notifications_Library">
+        <ID>System.Notifications.Library</ID>
+        <Version>7.5.1561.0</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+      <Reference Alias="System_WorkItem_ChangeRequest_Library">
+        <ID>System.WorkItem.ChangeRequest.Library</ID>
+        <Version>7.5.1561.0</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+      <Reference Alias="System_WorkItem_Problem_Library">
+        <ID>System.WorkItem.Problem.Library</ID>
+        <Version>7.5.1561.0</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+      <Reference Alias="System_WorkItem_ServiceRequest_Library">
+        <ID>System.WorkItem.ServiceRequest.Library</ID>
+        <Version>7.5.1561.0</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+      <Reference Alias="EnterpriseManagement">
+        <ID>Microsoft.EnterpriseManagement.ServiceManager.UI.Administration</ID>
+        <Version>7.5.1561.0</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+      <Reference Alias="SystemCenter">
+        <ID>Microsoft.SystemCenter.Subscriptions</ID>
+        <Version>7.5.1561.0</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+    </References>
+  </Manifest>
+  <TypeDefinitions>
+    <EntityTypes>
+      <ClassTypes>
+        <ClassType ID="WorkItemGroup.a5f036658ff24dd788731568139b8e56" Accessibility="Public" Abstract="false" Base="System_WorkItem_Library!System.WorkItemGroup" Hosted="false" Singleton="true" Extension="false" />
+        <ClassType ID="WorkItemGroup.69b4955b06bb4322a1c52647e1aed19f" Accessibility="Public" Abstract="false" Base="System_WorkItem_Library!System.WorkItemGroup" Hosted="false" Singleton="true" Extension="false" />
+        <ClassType ID="WorkItemGroup.afa8d50910044d9b9cf9a01795474fa2" Accessibility="Public" Abstract="false" Base="System_WorkItem_Library!System.WorkItemGroup" Hosted="false" Singleton="true" Extension="false" />
+        <ClassType ID="WorkItemGroup.9eae1d2ef97841e1ae101eee5d95c88e" Accessibility="Public" Abstract="false" Base="System_WorkItem_Library!System.WorkItemGroup" Hosted="false" Singleton="true" Extension="false" />
+      </ClassTypes>
+      <RelationshipTypes>
+        <RelationshipType ID="WorkItemGroup.a5f036658ff24dd788731568139b8e56_Contains_System.WorkItem.Incident" Accessibility="Public" Abstract="false" Base="System_WorkItem_Library!System.WorkItemGroupContainsWorkItems">
+          <Source ID="ContainedByGroup" MinCardinality="0" MaxCardinality="2147483647" Type="WorkItemGroup.a5f036658ff24dd788731568139b8e56" />
+          <Target ID="GroupContains" MinCardinality="0" MaxCardinality="2147483647" Type="System_WorkItem_Incident_Library!System.WorkItem.Incident" />
+        </RelationshipType>
+        <RelationshipType ID="WorkItemGroup.69b4955b06bb4322a1c52647e1aed19f_Contains_System.WorkItem.ChangeRequest" Accessibility="Public" Abstract="false" Base="System_WorkItem_Library!System.WorkItemGroupContainsWorkItems">
+          <Source ID="ContainedByGroup" MinCardinality="0" MaxCardinality="2147483647" Type="WorkItemGroup.69b4955b06bb4322a1c52647e1aed19f" />
+          <Target ID="GroupContains" MinCardinality="0" MaxCardinality="2147483647" Type="System_WorkItem_ChangeRequest_Library!System.WorkItem.ChangeRequest" />
+        </RelationshipType>
+        <RelationshipType ID="WorkItemGroup.afa8d50910044d9b9cf9a01795474fa2_Contains_System.WorkItem.Problem" Accessibility="Public" Abstract="false" Base="System_WorkItem_Library!System.WorkItemGroupContainsWorkItems">
+          <Source ID="ContainedByGroup" MinCardinality="0" MaxCardinality="2147483647" Type="WorkItemGroup.afa8d50910044d9b9cf9a01795474fa2" />
+          <Target ID="GroupContains" MinCardinality="0" MaxCardinality="2147483647" Type="System_WorkItem_Problem_Library!System.WorkItem.Problem" />
+        </RelationshipType>
+        <RelationshipType ID="WorkItemGroup.9eae1d2ef97841e1ae101eee5d95c88e_Contains_System.WorkItem.ServiceRequest" Accessibility="Public" Abstract="false" Base="System_WorkItem_Library!System.WorkItemGroupContainsWorkItems">
+          <Source ID="ContainedByGroup" MinCardinality="0" MaxCardinality="2147483647" Type="WorkItemGroup.9eae1d2ef97841e1ae101eee5d95c88e" />
+          <Target ID="GroupContains" MinCardinality="0" MaxCardinality="2147483647" Type="System_WorkItem_ServiceRequest_Library!System.WorkItem.ServiceRequest" />
+        </RelationshipType>
+      </RelationshipTypes>
+      <EnumerationTypes>
+        <EnumerationValue ID="TestGroup121_Enum" Accessibility="Public" Parent="System_WorkItem_Incident_Library!IncidentTierQueuesEnum" Ordinal="121" />
+      </EnumerationTypes>
+    </EntityTypes>
+  </TypeDefinitions>
+  <Categories>
+    <Category ID="Category.46006ef986da452db69a973e444ec60b" Target="NotificationSubscription399deb4a3b724d828d05da3ace84ced3" Value="EnterpriseManagement!Microsoft.EnterpriseManagement.ServiceManager.Rules.WorkflowSubscriptions" />
+    <Category ID="Category.98886a39830a4237a7ec1e2ed7b31375" Target="NotificationSubscriptionacb020cfcf854adb99f8bb649ea9225f" Value="EnterpriseManagement!Microsoft.EnterpriseManagement.ServiceManager.Rules.WorkflowSubscriptions" />
+    <Category ID="Category.aa339cb4dd014daeb2991f16247e7744" Target="NotificationSubscription1b1ac3a221664fda991fbcc0ff3c5669" Value="EnterpriseManagement!Microsoft.EnterpriseManagement.ServiceManager.Rules.WorkflowSubscriptions" />
+    <Category ID="Category.864a29d5952a4854a647c595620e7351" Target="NotificationSubscription8d3ec49183364c0a919b15d7d9869dfe" Value="EnterpriseManagement!Microsoft.EnterpriseManagement.ServiceManager.Rules.WorkflowSubscriptions" />
+    <Category ID="Category.f2f5f2f7234b4497a13aea34ba284036" Target="NotificationSubscriptionea41ad5037b84d25b9e3f004f6832a63" Value="EnterpriseManagement!Microsoft.EnterpriseManagement.ServiceManager.Rules.WorkflowSubscriptions" />
+    <Category ID="Category.fc3b6bc346cd4717aadfc3c09e313af9" Target="NotificationSubscriptionf5dde8a4689e4d55980bbdcabd4ed0cb" Value="EnterpriseManagement!Microsoft.EnterpriseManagement.ServiceManager.Rules.WorkflowSubscriptions" />
+    <Category ID="Category.905376631848404f93297df8810f9d45" Target="NotificationSubscriptionfad7888fea0740048f07623d1cb63fbc" Value="EnterpriseManagement!Microsoft.EnterpriseManagement.ServiceManager.Rules.WorkflowSubscriptions" />
+    <Category ID="Category.9f4da34a85e04817aa4b59ec4f79838f" Target="NotificationSubscription2cddd81838bc4f62a8d3549ff9aa34fa" Value="EnterpriseManagement!Microsoft.EnterpriseManagement.ServiceManager.Rules.WorkflowSubscriptions" />
+    <Category ID="Category.f8ac51900e2d470a88b159edd79f845a" Target="NotificationSubscriptionc31401142ccd442892f35c482b896b4e" Value="EnterpriseManagement!Microsoft.EnterpriseManagement.ServiceManager.Rules.WorkflowSubscriptions" />
+    <Category ID="Category.3298c15af551406181d0057fe462d1cc" Target="NotificationSubscription89bb029e9080417fa7f8aaad82f441c9" Value="EnterpriseManagement!Microsoft.EnterpriseManagement.ServiceManager.Rules.WorkflowSubscriptions" />
+    <Category ID="Category.433ddec5676c4fedbeffe9e46f57de0e" Target="NotificationSubscription67963718af5f4d8897c5ffea040a2098" Value="EnterpriseManagement!Microsoft.EnterpriseManagement.ServiceManager.Rules.WorkflowSubscriptions" />
+    <Category ID="Category.fd0fdac7cb994da495f7f1e252a34a42" Target="NotificationSubscriptioncca90eef25f745bdaee423830f8e7c30" Value="EnterpriseManagement!Microsoft.EnterpriseManagement.ServiceManager.Rules.WorkflowSubscriptions" />
+    <Category ID="Category.3e0d3394da694ffca0078555c4de462d" Target="NotificationSubscription13550fd474bf4d698360bab68747e5c0" Value="EnterpriseManagement!Microsoft.EnterpriseManagement.ServiceManager.Rules.WorkflowSubscriptions" />
+    <Category ID="Category.e6036b747fee4243bbdf789311bb58f3" Target="NotificationSubscription5e20857451d3455fb42692878a7305c0" Value="EnterpriseManagement!Microsoft.EnterpriseManagement.ServiceManager.Rules.WorkflowSubscriptions" />
+  </Categories>
+  <Monitoring>
+    <Discoveries>
+      <Discovery ID="WorkItemGroup.a5f036658ff24dd788731568139b8e56.Discovery" Enabled="true" Target="WorkItemGroup.a5f036658ff24dd788731568139b8e56" ConfirmDelivery="false" Remotable="true" Priority="Normal">
+        <Category>Discovery</Category>
+        <DiscoveryTypes>
+          <DiscoveryRelationship TypeID="WorkItemGroup.a5f036658ff24dd788731568139b8e56_Contains_System.WorkItem.Incident" />
+        </DiscoveryTypes>
+        <DataSource ID="GroupPopulationDataSource" TypeID="Microsoft_SystemCenter_Library!Microsoft.SystemCenter.GroupPopulator">
+          <RuleId>$MPElement$</RuleId>
+          <GroupInstanceId>$MPElement[Name="WorkItemGroup.a5f036658ff24dd788731568139b8e56"]$</GroupInstanceId>
+          <MembershipRules>
+            <MembershipRule>
+              <MonitoringClass>$MPElement[Name="System_WorkItem_Incident_Library!System.WorkItem.Incident"]$</MonitoringClass>
+              <RelationshipClass>$MPElement[Name="WorkItemGroup.a5f036658ff24dd788731568139b8e56_Contains_System.WorkItem.Incident"]$</RelationshipClass>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <Property>$Context/Property[Type='System_WorkItem_Incident_Library!System.WorkItem.Incident']/TierQueue$</Property>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value>{b340a39c-3bbe-c9f5-9512-fbc1d8a15830}</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </MembershipRule>
+          </MembershipRules>
+        </DataSource>
+      </Discovery>
+      <Discovery ID="WorkItemGroup.69b4955b06bb4322a1c52647e1aed19f.Discovery" Enabled="true" Target="WorkItemGroup.69b4955b06bb4322a1c52647e1aed19f" ConfirmDelivery="false" Remotable="true" Priority="Normal">
+        <Category>Discovery</Category>
+        <DiscoveryTypes>
+          <DiscoveryRelationship TypeID="WorkItemGroup.69b4955b06bb4322a1c52647e1aed19f_Contains_System.WorkItem.ChangeRequest" />
+        </DiscoveryTypes>
+        <DataSource ID="GroupPopulationDataSource" TypeID="Microsoft_SystemCenter_Library!Microsoft.SystemCenter.GroupPopulator">
+          <RuleId>$MPElement$</RuleId>
+          <GroupInstanceId>$MPElement[Name="WorkItemGroup.69b4955b06bb4322a1c52647e1aed19f"]$</GroupInstanceId>
+          <MembershipRules>
+            <MembershipRule>
+              <MonitoringClass>$MPElement[Name="System_WorkItem_ChangeRequest_Library!System.WorkItem.ChangeRequest"]$</MonitoringClass>
+              <RelationshipClass>$MPElement[Name="WorkItemGroup.69b4955b06bb4322a1c52647e1aed19f_Contains_System.WorkItem.ChangeRequest"]$</RelationshipClass>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <Property>$Context/Property[Type='System_WorkItem_ChangeRequest_Library!System.WorkItem.ChangeRequest']/TierQueue$</Property>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value>{b340a39c-3bbe-c9f5-9512-fbc1d8a15830}</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </MembershipRule>
+          </MembershipRules>
+        </DataSource>
+      </Discovery>
+      <Discovery ID="WorkItemGroup.afa8d50910044d9b9cf9a01795474fa2.Discovery" Enabled="true" Target="WorkItemGroup.afa8d50910044d9b9cf9a01795474fa2" ConfirmDelivery="false" Remotable="true" Priority="Normal">
+        <Category>Discovery</Category>
+        <DiscoveryTypes>
+          <DiscoveryRelationship TypeID="WorkItemGroup.afa8d50910044d9b9cf9a01795474fa2_Contains_System.WorkItem.Problem" />
+        </DiscoveryTypes>
+        <DataSource ID="GroupPopulationDataSource" TypeID="Microsoft_SystemCenter_Library!Microsoft.SystemCenter.GroupPopulator">
+          <RuleId>$MPElement$</RuleId>
+          <GroupInstanceId>$MPElement[Name="WorkItemGroup.afa8d50910044d9b9cf9a01795474fa2"]$</GroupInstanceId>
+          <MembershipRules>
+            <MembershipRule>
+              <MonitoringClass>$MPElement[Name="System_WorkItem_Problem_Library!System.WorkItem.Problem"]$</MonitoringClass>
+              <RelationshipClass>$MPElement[Name="WorkItemGroup.afa8d50910044d9b9cf9a01795474fa2_Contains_System.WorkItem.Problem"]$</RelationshipClass>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <Property>$Context/Property[Type='System_WorkItem_Problem_Library!System.WorkItem.Problem']/TierQueue$</Property>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value>{b340a39c-3bbe-c9f5-9512-fbc1d8a15830}</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </MembershipRule>
+          </MembershipRules>
+        </DataSource>
+      </Discovery>
+      <Discovery ID="WorkItemGroup.9eae1d2ef97841e1ae101eee5d95c88e.Discovery" Enabled="true" Target="WorkItemGroup.9eae1d2ef97841e1ae101eee5d95c88e" ConfirmDelivery="false" Remotable="true" Priority="Normal">
+        <Category>Discovery</Category>
+        <DiscoveryTypes>
+          <DiscoveryRelationship TypeID="WorkItemGroup.9eae1d2ef97841e1ae101eee5d95c88e_Contains_System.WorkItem.ServiceRequest" />
+        </DiscoveryTypes>
+        <DataSource ID="GroupPopulationDataSource" TypeID="Microsoft_SystemCenter_Library!Microsoft.SystemCenter.GroupPopulator">
+          <RuleId>$MPElement$</RuleId>
+          <GroupInstanceId>$MPElement[Name="WorkItemGroup.9eae1d2ef97841e1ae101eee5d95c88e"]$</GroupInstanceId>
+          <MembershipRules>
+            <MembershipRule>
+              <MonitoringClass>$MPElement[Name="System_WorkItem_ServiceRequest_Library!System.WorkItem.ServiceRequest"]$</MonitoringClass>
+              <RelationshipClass>$MPElement[Name="WorkItemGroup.9eae1d2ef97841e1ae101eee5d95c88e_Contains_System.WorkItem.ServiceRequest"]$</RelationshipClass>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <Property>$Context/Property[Type='System_WorkItem_ServiceRequest_Library!System.WorkItem.ServiceRequest']/TierQueue$</Property>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value>{b340a39c-3bbe-c9f5-9512-fbc1d8a15830}</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </MembershipRule>
+          </MembershipRules>
+        </DataSource>
+      </Discovery>
+    </Discoveries>
+    <Rules>
+      <Rule ID="NotificationSubscription399deb4a3b724d828d05da3ace84ced3" Enabled="true" Target="Microsoft_SystemCenter_Library!Microsoft.SystemCenter.SubscriptionWorkflowTarget" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
+        <Category>System</Category>
+        <DataSources>
+          <DataSource ID="DS" TypeID="SystemCenter!Microsoft.SystemCenter.CmdbInstanceSubscription.DataSourceModule">
+            <Subscription>
+              <InstanceSubscription Type="a604b942-4c7b-2fb2-28dc-61dc6f465c68">
+                <AddInstance>
+                  <Criteria>
+                    <Expression>
+                      <SimpleExpression>
+                        <ValueExpression>
+                          <Property State="Post">$Context/Property[Type='System_WorkItem_Incident_Library!System.WorkItem.Incident']/TierQueue$</Property>
+                        </ValueExpression>
+                        <Operator>Equal</Operator>
+                        <ValueExpression>
+                          <Value>{b340a39c-3bbe-c9f5-9512-fbc1d8a15830}</Value>
+                        </ValueExpression>
+                      </SimpleExpression>
+                    </Expression>
+                  </Criteria>
+                </AddInstance>
+              </InstanceSubscription>
+              <PollingIntervalInSeconds>60</PollingIntervalInSeconds>
+              <BatchSize>100</BatchSize>
+            </Subscription>
+          </DataSource>
+        </DataSources>
+        <WriteActions>
+          <WriteAction ID="WA" TypeID="SystemCenter!Microsoft.EnterpriseManagement.SystemCenter.Subscription.WindowsWorkflowTaskWriteAction">
+            <Subscription>
+              <VisibleWorkflowStatusUi>true</VisibleWorkflowStatusUi>
+              <EnableBatchProcessing>false</EnableBatchProcessing>
+              <WindowsWorkflowConfiguration>
+                <AssemblyName>Microsoft.EnterpriseManagement.Notifications.Workflows</AssemblyName>
+                <WorkflowTypeName>Microsoft.EnterpriseManagement.Notifications.Workflows.SendNotificationsActivity</WorkflowTypeName>
+                <WorkflowParameters>
+                  <WorkflowParameter Name="SubscriptionId" Type="guid">$MPElement$</WorkflowParameter>
+                  <WorkflowParameter Name="DataItem" Type="string">$Data/.$</WorkflowParameter>
+                  <WorkflowParameter Name="InstanceId" Type="string">$Data/BaseManagedEntityId$</WorkflowParameter>
+                  <WorkflowArrayParameter Name="TemplateIds" Type="string">
+                    <Item>5d822e13-666e-d8f6-dd81-ed898a6001ed</Item>
+                  </WorkflowArrayParameter>
+                  <WorkflowArrayParameter Name="PrimaryUserList" Type="string">
+                    <Item>d46a191a-ce29-3bd0-8ad3-c8fe03a908b7</Item>
+                  </WorkflowArrayParameter>
+                </WorkflowParameters>
+                <RetryExceptions />
+                <RetryDelaySeconds>60</RetryDelaySeconds>
+                <MaximumRunningTimeSeconds>7200</MaximumRunningTimeSeconds>
+              </WindowsWorkflowConfiguration>
+            </Subscription>
+          </WriteAction>
+        </WriteActions>
+      </Rule>
+      <Rule ID="NotificationSubscriptionacb020cfcf854adb99f8bb649ea9225f" Enabled="true" Target="Microsoft_SystemCenter_Library!Microsoft.SystemCenter.SubscriptionWorkflowTarget" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
+        <Category>System</Category>
+        <DataSources>
+          <DataSource ID="DS" TypeID="SystemCenter!Microsoft.SystemCenter.CmdbInstanceSubscription.DataSourceModule">
+            <Subscription>
+              <InstanceSubscription Type="a604b942-4c7b-2fb2-28dc-61dc6f465c68">
+                <UpdateInstance>
+                  <Criteria>
+                    <Expression>
+                      <SimpleExpression>
+                        <ValueExpression>
+                          <Property State="Post">$Context/Property[Type='System_WorkItem_Incident_Library!System.WorkItem.Incident']/TierQueue$</Property>
+                        </ValueExpression>
+                        <Operator>Equal</Operator>
+                        <ValueExpression>
+                          <Value>{b340a39c-3bbe-c9f5-9512-fbc1d8a15830}</Value>
+                        </ValueExpression>
+                      </SimpleExpression>
+                    </Expression>
+                  </Criteria>
+                </UpdateInstance>
+              </InstanceSubscription>
+              <PollingIntervalInSeconds>60</PollingIntervalInSeconds>
+              <BatchSize>100</BatchSize>
+            </Subscription>
+          </DataSource>
+        </DataSources>
+        <WriteActions>
+          <WriteAction ID="WA" TypeID="SystemCenter!Microsoft.EnterpriseManagement.SystemCenter.Subscription.WindowsWorkflowTaskWriteAction">
+            <Subscription>
+              <VisibleWorkflowStatusUi>true</VisibleWorkflowStatusUi>
+              <EnableBatchProcessing>false</EnableBatchProcessing>
+              <WindowsWorkflowConfiguration>
+                <AssemblyName>Microsoft.EnterpriseManagement.Notifications.Workflows</AssemblyName>
+                <WorkflowTypeName>Microsoft.EnterpriseManagement.Notifications.Workflows.SendNotificationsActivity</WorkflowTypeName>
+                <WorkflowParameters>
+                  <WorkflowParameter Name="SubscriptionId" Type="guid">$MPElement$</WorkflowParameter>
+                  <WorkflowParameter Name="DataItem" Type="string">$Data/.$</WorkflowParameter>
+                  <WorkflowParameter Name="InstanceId" Type="string">$Data/BaseManagedEntityId$</WorkflowParameter>
+                  <WorkflowArrayParameter Name="TemplateIds" Type="string">
+                    <Item>5d822e13-666e-d8f6-dd81-ed898a6001ed</Item>
+                  </WorkflowArrayParameter>
+                  <WorkflowArrayParameter Name="PrimaryUserList" Type="string">
+                    <Item>d46a191a-ce29-3bd0-8ad3-c8fe03a908b7</Item>
+                  </WorkflowArrayParameter>
+                </WorkflowParameters>
+                <RetryExceptions />
+                <RetryDelaySeconds>60</RetryDelaySeconds>
+                <MaximumRunningTimeSeconds>7200</MaximumRunningTimeSeconds>
+              </WindowsWorkflowConfiguration>
+            </Subscription>
+          </WriteAction>
+        </WriteActions>
+      </Rule>
+      <Rule ID="NotificationSubscription1b1ac3a221664fda991fbcc0ff3c5669" Enabled="true" Target="Microsoft_SystemCenter_Library!Microsoft.SystemCenter.SubscriptionWorkflowTarget" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
+        <Category>System</Category>
+        <DataSources>
+          <DataSource ID="DS" TypeID="SystemCenter!Microsoft.SystemCenter.CmdbInstanceSubscription.DataSourceModule">
+            <Subscription>
+              <InstanceSubscription Type="e6c9cf6e-d7fe-1b5d-216c-c3f5d2c7670c">
+                <AddInstance>
+                  <Criteria>
+                    <Expression>
+                      <SimpleExpression>
+                        <ValueExpression>
+                          <Property State="Post">$Context/Property[Type='System_WorkItem_ChangeRequest_Library!System.WorkItem.ChangeRequest']/TierQueue$</Property>
+                        </ValueExpression>
+                        <Operator>Equal</Operator>
+                        <ValueExpression>
+                          <Value>{b340a39c-3bbe-c9f5-9512-fbc1d8a15830}</Value>
+                        </ValueExpression>
+                      </SimpleExpression>
+                    </Expression>
+                  </Criteria>
+                </AddInstance>
+              </InstanceSubscription>
+              <PollingIntervalInSeconds>60</PollingIntervalInSeconds>
+              <BatchSize>100</BatchSize>
+            </Subscription>
+          </DataSource>
+        </DataSources>
+        <WriteActions>
+          <WriteAction ID="WA" TypeID="SystemCenter!Microsoft.EnterpriseManagement.SystemCenter.Subscription.WindowsWorkflowTaskWriteAction">
+            <Subscription>
+              <VisibleWorkflowStatusUi>true</VisibleWorkflowStatusUi>
+              <EnableBatchProcessing>false</EnableBatchProcessing>
+              <WindowsWorkflowConfiguration>
+                <AssemblyName>Microsoft.EnterpriseManagement.Notifications.Workflows</AssemblyName>
+                <WorkflowTypeName>Microsoft.EnterpriseManagement.Notifications.Workflows.SendNotificationsActivity</WorkflowTypeName>
+                <WorkflowParameters>
+                  <WorkflowParameter Name="SubscriptionId" Type="guid">$MPElement$</WorkflowParameter>
+                  <WorkflowParameter Name="DataItem" Type="string">$Data/.$</WorkflowParameter>
+                  <WorkflowParameter Name="InstanceId" Type="string">$Data/BaseManagedEntityId$</WorkflowParameter>
+                  <WorkflowArrayParameter Name="TemplateIds" Type="string">
+                    <Item>a733e5da-1591-dcfc-2111-7b2a8da9070f</Item>
+                  </WorkflowArrayParameter>
+                  <WorkflowArrayParameter Name="PrimaryUserList" Type="string">
+                    <Item>d46a191a-ce29-3bd0-8ad3-c8fe03a908b7</Item>
+                  </WorkflowArrayParameter>
+                </WorkflowParameters>
+                <RetryExceptions />
+                <RetryDelaySeconds>60</RetryDelaySeconds>
+                <MaximumRunningTimeSeconds>7200</MaximumRunningTimeSeconds>
+              </WindowsWorkflowConfiguration>
+            </Subscription>
+          </WriteAction>
+        </WriteActions>
+      </Rule>
+      <Rule ID="NotificationSubscription8d3ec49183364c0a919b15d7d9869dfe" Enabled="true" Target="Microsoft_SystemCenter_Library!Microsoft.SystemCenter.SubscriptionWorkflowTarget" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
+        <Category>System</Category>
+        <DataSources>
+          <DataSource ID="DS" TypeID="SystemCenter!Microsoft.SystemCenter.CmdbInstanceSubscription.DataSourceModule">
+            <Subscription>
+              <InstanceSubscription Type="e6c9cf6e-d7fe-1b5d-216c-c3f5d2c7670c">
+                <UpdateInstance>
+                  <Criteria>
+                    <Expression>
+                      <SimpleExpression>
+                        <ValueExpression>
+                          <Property State="Post">$Context/Property[Type='System_WorkItem_ChangeRequest_Library!System.WorkItem.ChangeRequest']/TierQueue$</Property>
+                        </ValueExpression>
+                        <Operator>Equal</Operator>
+                        <ValueExpression>
+                          <Value>{b340a39c-3bbe-c9f5-9512-fbc1d8a15830}</Value>
+                        </ValueExpression>
+                      </SimpleExpression>
+                    </Expression>
+                  </Criteria>
+                </UpdateInstance>
+              </InstanceSubscription>
+              <PollingIntervalInSeconds>60</PollingIntervalInSeconds>
+              <BatchSize>100</BatchSize>
+            </Subscription>
+          </DataSource>
+        </DataSources>
+        <WriteActions>
+          <WriteAction ID="WA" TypeID="SystemCenter!Microsoft.EnterpriseManagement.SystemCenter.Subscription.WindowsWorkflowTaskWriteAction">
+            <Subscription>
+              <VisibleWorkflowStatusUi>true</VisibleWorkflowStatusUi>
+              <EnableBatchProcessing>false</EnableBatchProcessing>
+              <WindowsWorkflowConfiguration>
+                <AssemblyName>Microsoft.EnterpriseManagement.Notifications.Workflows</AssemblyName>
+                <WorkflowTypeName>Microsoft.EnterpriseManagement.Notifications.Workflows.SendNotificationsActivity</WorkflowTypeName>
+                <WorkflowParameters>
+                  <WorkflowParameter Name="SubscriptionId" Type="guid">$MPElement$</WorkflowParameter>
+                  <WorkflowParameter Name="DataItem" Type="string">$Data/.$</WorkflowParameter>
+                  <WorkflowParameter Name="InstanceId" Type="string">$Data/BaseManagedEntityId$</WorkflowParameter>
+                  <WorkflowArrayParameter Name="TemplateIds" Type="string">
+                    <Item>a733e5da-1591-dcfc-2111-7b2a8da9070f</Item>
+                  </WorkflowArrayParameter>
+                  <WorkflowArrayParameter Name="PrimaryUserList" Type="string">
+                    <Item>d46a191a-ce29-3bd0-8ad3-c8fe03a908b7</Item>
+                  </WorkflowArrayParameter>
+                </WorkflowParameters>
+                <RetryExceptions />
+                <RetryDelaySeconds>60</RetryDelaySeconds>
+                <MaximumRunningTimeSeconds>7200</MaximumRunningTimeSeconds>
+              </WindowsWorkflowConfiguration>
+            </Subscription>
+          </WriteAction>
+        </WriteActions>
+      </Rule>
+      <Rule ID="NotificationSubscriptionea41ad5037b84d25b9e3f004f6832a63" Enabled="true" Target="Microsoft_SystemCenter_Library!Microsoft.SystemCenter.SubscriptionWorkflowTarget" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
+        <Category>System</Category>
+        <DataSources>
+          <DataSource ID="DS" TypeID="SystemCenter!Microsoft.SystemCenter.CmdbInstanceSubscription.DataSourceModule">
+            <Subscription>
+              <InstanceSubscription Type="422afc88-5eff-f4c5-f8f6-e01038cde67f">
+                <AddInstance>
+                  <Criteria>
+                    <Expression>
+                      <SimpleExpression>
+                        <ValueExpression>
+                          <Property State="Post">$Context/Property[Type='System_WorkItem_Problem_Library!System.WorkItem.Problem']/TierQueue$</Property>
+                        </ValueExpression>
+                        <Operator>Equal</Operator>
+                        <ValueExpression>
+                          <Value>{b340a39c-3bbe-c9f5-9512-fbc1d8a15830}</Value>
+                        </ValueExpression>
+                      </SimpleExpression>
+                    </Expression>
+                  </Criteria>
+                </AddInstance>
+              </InstanceSubscription>
+              <PollingIntervalInSeconds>60</PollingIntervalInSeconds>
+              <BatchSize>100</BatchSize>
+            </Subscription>
+          </DataSource>
+        </DataSources>
+        <WriteActions>
+          <WriteAction ID="WA" TypeID="SystemCenter!Microsoft.EnterpriseManagement.SystemCenter.Subscription.WindowsWorkflowTaskWriteAction">
+            <Subscription>
+              <VisibleWorkflowStatusUi>true</VisibleWorkflowStatusUi>
+              <EnableBatchProcessing>false</EnableBatchProcessing>
+              <WindowsWorkflowConfiguration>
+                <AssemblyName>Microsoft.EnterpriseManagement.Notifications.Workflows</AssemblyName>
+                <WorkflowTypeName>Microsoft.EnterpriseManagement.Notifications.Workflows.SendNotificationsActivity</WorkflowTypeName>
+                <WorkflowParameters>
+                  <WorkflowParameter Name="SubscriptionId" Type="guid">$MPElement$</WorkflowParameter>
+                  <WorkflowParameter Name="DataItem" Type="string">$Data/.$</WorkflowParameter>
+                  <WorkflowParameter Name="InstanceId" Type="string">$Data/BaseManagedEntityId$</WorkflowParameter>
+                  <WorkflowArrayParameter Name="TemplateIds" Type="string">
+                    <Item>18bce03c-089d-8cf7-1214-309192443c77</Item>
+                  </WorkflowArrayParameter>
+                  <WorkflowArrayParameter Name="PrimaryUserList" Type="string">
+                    <Item>d46a191a-ce29-3bd0-8ad3-c8fe03a908b7</Item>
+                  </WorkflowArrayParameter>
+                </WorkflowParameters>
+                <RetryExceptions />
+                <RetryDelaySeconds>60</RetryDelaySeconds>
+                <MaximumRunningTimeSeconds>7200</MaximumRunningTimeSeconds>
+              </WindowsWorkflowConfiguration>
+            </Subscription>
+          </WriteAction>
+        </WriteActions>
+      </Rule>
+      <Rule ID="NotificationSubscriptionf5dde8a4689e4d55980bbdcabd4ed0cb" Enabled="true" Target="Microsoft_SystemCenter_Library!Microsoft.SystemCenter.SubscriptionWorkflowTarget" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
+        <Category>System</Category>
+        <DataSources>
+          <DataSource ID="DS" TypeID="SystemCenter!Microsoft.SystemCenter.CmdbInstanceSubscription.DataSourceModule">
+            <Subscription>
+              <InstanceSubscription Type="422afc88-5eff-f4c5-f8f6-e01038cde67f">
+                <UpdateInstance>
+                  <Criteria>
+                    <Expression>
+                      <SimpleExpression>
+                        <ValueExpression>
+                          <Property State="Post">$Context/Property[Type='System_WorkItem_Problem_Library!System.WorkItem.Problem']/TierQueue$</Property>
+                        </ValueExpression>
+                        <Operator>Equal</Operator>
+                        <ValueExpression>
+                          <Value>{b340a39c-3bbe-c9f5-9512-fbc1d8a15830}</Value>
+                        </ValueExpression>
+                      </SimpleExpression>
+                    </Expression>
+                  </Criteria>
+                </UpdateInstance>
+              </InstanceSubscription>
+              <PollingIntervalInSeconds>60</PollingIntervalInSeconds>
+              <BatchSize>100</BatchSize>
+            </Subscription>
+          </DataSource>
+        </DataSources>
+        <WriteActions>
+          <WriteAction ID="WA" TypeID="SystemCenter!Microsoft.EnterpriseManagement.SystemCenter.Subscription.WindowsWorkflowTaskWriteAction">
+            <Subscription>
+              <VisibleWorkflowStatusUi>true</VisibleWorkflowStatusUi>
+              <EnableBatchProcessing>false</EnableBatchProcessing>
+              <WindowsWorkflowConfiguration>
+                <AssemblyName>Microsoft.EnterpriseManagement.Notifications.Workflows</AssemblyName>
+                <WorkflowTypeName>Microsoft.EnterpriseManagement.Notifications.Workflows.SendNotificationsActivity</WorkflowTypeName>
+                <WorkflowParameters>
+                  <WorkflowParameter Name="SubscriptionId" Type="guid">$MPElement$</WorkflowParameter>
+                  <WorkflowParameter Name="DataItem" Type="string">$Data/.$</WorkflowParameter>
+                  <WorkflowParameter Name="InstanceId" Type="string">$Data/BaseManagedEntityId$</WorkflowParameter>
+                  <WorkflowArrayParameter Name="TemplateIds" Type="string">
+                    <Item>18bce03c-089d-8cf7-1214-309192443c77</Item>
+                  </WorkflowArrayParameter>
+                  <WorkflowArrayParameter Name="PrimaryUserList" Type="string">
+                    <Item>d46a191a-ce29-3bd0-8ad3-c8fe03a908b7</Item>
+                  </WorkflowArrayParameter>
+                </WorkflowParameters>
+                <RetryExceptions />
+                <RetryDelaySeconds>60</RetryDelaySeconds>
+                <MaximumRunningTimeSeconds>7200</MaximumRunningTimeSeconds>
+              </WindowsWorkflowConfiguration>
+            </Subscription>
+          </WriteAction>
+        </WriteActions>
+      </Rule>
+      <Rule ID="NotificationSubscriptionfad7888fea0740048f07623d1cb63fbc" Enabled="true" Target="Microsoft_SystemCenter_Library!Microsoft.SystemCenter.SubscriptionWorkflowTarget" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
+        <Category>System</Category>
+        <DataSources>
+          <DataSource ID="DS" TypeID="SystemCenter!Microsoft.SystemCenter.CmdbInstanceSubscription.DataSourceModule">
+            <Subscription>
+              <InstanceSubscription Type="04b69835-6343-4de2-4b19-6be08c612989">
+                <AddInstance>
+                  <Criteria>
+                    <Expression>
+                      <SimpleExpression>
+                        <ValueExpression>
+                          <Property State="Post">$Context/Property[Type='System_WorkItem_ServiceRequest_Library!System.WorkItem.ServiceRequest']/TierQueue$</Property>
+                        </ValueExpression>
+                        <Operator>Equal</Operator>
+                        <ValueExpression>
+                          <Value>{b340a39c-3bbe-c9f5-9512-fbc1d8a15830}</Value>
+                        </ValueExpression>
+                      </SimpleExpression>
+                    </Expression>
+                  </Criteria>
+                </AddInstance>
+              </InstanceSubscription>
+              <PollingIntervalInSeconds>60</PollingIntervalInSeconds>
+              <BatchSize>100</BatchSize>
+            </Subscription>
+          </DataSource>
+        </DataSources>
+        <WriteActions>
+          <WriteAction ID="WA" TypeID="SystemCenter!Microsoft.EnterpriseManagement.SystemCenter.Subscription.WindowsWorkflowTaskWriteAction">
+            <Subscription>
+              <VisibleWorkflowStatusUi>true</VisibleWorkflowStatusUi>
+              <EnableBatchProcessing>false</EnableBatchProcessing>
+              <WindowsWorkflowConfiguration>
+                <AssemblyName>Microsoft.EnterpriseManagement.Notifications.Workflows</AssemblyName>
+                <WorkflowTypeName>Microsoft.EnterpriseManagement.Notifications.Workflows.SendNotificationsActivity</WorkflowTypeName>
+                <WorkflowParameters>
+                  <WorkflowParameter Name="SubscriptionId" Type="guid">$MPElement$</WorkflowParameter>
+                  <WorkflowParameter Name="DataItem" Type="string">$Data/.$</WorkflowParameter>
+                  <WorkflowParameter Name="InstanceId" Type="string">$Data/BaseManagedEntityId$</WorkflowParameter>
+                  <WorkflowArrayParameter Name="TemplateIds" Type="string">
+                    <Item>6f7884a4-4eed-dc3b-315a-d039cbace3ad</Item>
+                  </WorkflowArrayParameter>
+                  <WorkflowArrayParameter Name="PrimaryUserList" Type="string">
+                    <Item>d46a191a-ce29-3bd0-8ad3-c8fe03a908b7</Item>
+                  </WorkflowArrayParameter>
+                </WorkflowParameters>
+                <RetryExceptions />
+                <RetryDelaySeconds>60</RetryDelaySeconds>
+                <MaximumRunningTimeSeconds>7200</MaximumRunningTimeSeconds>
+              </WindowsWorkflowConfiguration>
+            </Subscription>
+          </WriteAction>
+        </WriteActions>
+      </Rule>
+      <Rule ID="NotificationSubscription2cddd81838bc4f62a8d3549ff9aa34fa" Enabled="true" Target="Microsoft_SystemCenter_Library!Microsoft.SystemCenter.SubscriptionWorkflowTarget" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
+        <Category>System</Category>
+        <DataSources>
+          <DataSource ID="DS" TypeID="SystemCenter!Microsoft.SystemCenter.CmdbInstanceSubscription.DataSourceModule">
+            <Subscription>
+              <InstanceSubscription Type="04b69835-6343-4de2-4b19-6be08c612989">
+                <UpdateInstance>
+                  <Criteria>
+                    <Expression>
+                      <SimpleExpression>
+                        <ValueExpression>
+                          <Property State="Post">$Context/Property[Type='System_WorkItem_ServiceRequest_Library!System.WorkItem.ServiceRequest']/TierQueue$</Property>
+                        </ValueExpression>
+                        <Operator>Equal</Operator>
+                        <ValueExpression>
+                          <Value>{b340a39c-3bbe-c9f5-9512-fbc1d8a15830}</Value>
+                        </ValueExpression>
+                      </SimpleExpression>
+                    </Expression>
+                  </Criteria>
+                </UpdateInstance>
+              </InstanceSubscription>
+              <PollingIntervalInSeconds>60</PollingIntervalInSeconds>
+              <BatchSize>100</BatchSize>
+            </Subscription>
+          </DataSource>
+        </DataSources>
+        <WriteActions>
+          <WriteAction ID="WA" TypeID="SystemCenter!Microsoft.EnterpriseManagement.SystemCenter.Subscription.WindowsWorkflowTaskWriteAction">
+            <Subscription>
+              <VisibleWorkflowStatusUi>true</VisibleWorkflowStatusUi>
+              <EnableBatchProcessing>false</EnableBatchProcessing>
+              <WindowsWorkflowConfiguration>
+                <AssemblyName>Microsoft.EnterpriseManagement.Notifications.Workflows</AssemblyName>
+                <WorkflowTypeName>Microsoft.EnterpriseManagement.Notifications.Workflows.SendNotificationsActivity</WorkflowTypeName>
+                <WorkflowParameters>
+                  <WorkflowParameter Name="SubscriptionId" Type="guid">$MPElement$</WorkflowParameter>
+                  <WorkflowParameter Name="DataItem" Type="string">$Data/.$</WorkflowParameter>
+                  <WorkflowParameter Name="InstanceId" Type="string">$Data/BaseManagedEntityId$</WorkflowParameter>
+                  <WorkflowArrayParameter Name="TemplateIds" Type="string">
+                    <Item>6f7884a4-4eed-dc3b-315a-d039cbace3ad</Item>
+                  </WorkflowArrayParameter>
+                  <WorkflowArrayParameter Name="PrimaryUserList" Type="string">
+                    <Item>d46a191a-ce29-3bd0-8ad3-c8fe03a908b7</Item>
+                  </WorkflowArrayParameter>
+                </WorkflowParameters>
+                <RetryExceptions />
+                <RetryDelaySeconds>60</RetryDelaySeconds>
+                <MaximumRunningTimeSeconds>7200</MaximumRunningTimeSeconds>
+              </WindowsWorkflowConfiguration>
+            </Subscription>
+          </WriteAction>
+        </WriteActions>
+      </Rule>
+      <Rule ID="NotificationSubscriptionc31401142ccd442892f35c482b896b4e" Enabled="true" Target="Microsoft_SystemCenter_Library!Microsoft.SystemCenter.SubscriptionWorkflowTarget" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
+        <Category>System</Category>
+        <DataSources>
+          <DataSource ID="DS" TypeID="SystemCenter!Microsoft.SystemCenter.CmdbInstanceSubscription.DataSourceModule">
+            <Subscription>
+              <InstanceSubscription Type="04b69835-6343-4de2-4b19-6be08c612989">
+                <UpdateInstance>
+                  <Criteria>
+                    <Expression>
+                      <SimpleExpression>
+                        <ValueExpression>
+                          <Property State="Post">$Context/Property[Type='System_WorkItem_ServiceRequest_Library!System.WorkItem.ServiceRequest']/Status$</Property>
+                        </ValueExpression>
+                        <Operator>Equal</Operator>
+                        <ValueExpression>
+                          <Value>{b026fdfd-89bd-490b-e1fd-a599c78d440f}</Value>
+                        </ValueExpression>
+                      </SimpleExpression>
+                    </Expression>
+                  </Criteria>
+                </UpdateInstance>
+              </InstanceSubscription>
+              <PollingIntervalInSeconds>60</PollingIntervalInSeconds>
+              <BatchSize>100</BatchSize>
+            </Subscription>
+          </DataSource>
+        </DataSources>
+        <WriteActions>
+          <WriteAction ID="WA" TypeID="SystemCenter!Microsoft.EnterpriseManagement.SystemCenter.Subscription.WindowsWorkflowTaskWriteAction">
+            <Subscription>
+              <VisibleWorkflowStatusUi>true</VisibleWorkflowStatusUi>
+              <EnableBatchProcessing>false</EnableBatchProcessing>
+              <WindowsWorkflowConfiguration>
+                <AssemblyName>Microsoft.EnterpriseManagement.Notifications.Workflows</AssemblyName>
+                <WorkflowTypeName>Microsoft.EnterpriseManagement.Notifications.Workflows.SendNotificationsActivity</WorkflowTypeName>
+                <WorkflowParameters>
+                  <WorkflowParameter Name="SubscriptionId" Type="guid">$MPElement$</WorkflowParameter>
+                  <WorkflowParameter Name="DataItem" Type="string">$Data/.$</WorkflowParameter>
+                  <WorkflowParameter Name="InstanceId" Type="string">$Data/BaseManagedEntityId$</WorkflowParameter>
+                  <WorkflowArrayParameter Name="TemplateIds" Type="string">
+                    <Item>6f7884a4-4eed-dc3b-315a-d039cbace3ad</Item>
+                  </WorkflowArrayParameter>
+                  <WorkflowArrayParameter Name="PrimaryUserList" Type="string">
+                    <Item>d46a191a-ce29-3bd0-8ad3-c8fe03a908b7</Item>
+                  </WorkflowArrayParameter>
+                </WorkflowParameters>
+                <RetryExceptions />
+                <RetryDelaySeconds>60</RetryDelaySeconds>
+                <MaximumRunningTimeSeconds>7200</MaximumRunningTimeSeconds>
+              </WindowsWorkflowConfiguration>
+            </Subscription>
+          </WriteAction>
+        </WriteActions>
+      </Rule>
+      <Rule ID="NotificationSubscription89bb029e9080417fa7f8aaad82f441c9" Enabled="true" Target="Microsoft_SystemCenter_Library!Microsoft.SystemCenter.SubscriptionWorkflowTarget" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
+        <Category>System</Category>
+        <DataSources>
+          <DataSource ID="DS" TypeID="SystemCenter!Microsoft.SystemCenter.CmdbInstanceSubscription.DataSourceModule">
+            <Subscription>
+              <InstanceSubscription Type="04b69835-6343-4de2-4b19-6be08c612989">
+                <UpdateInstance>
+                  <Criteria>
+                    <Expression>
+                      <SimpleExpression>
+                        <ValueExpression>
+                          <Property State="Post">$Context/Property[Type='System_WorkItem_ServiceRequest_Library!System.WorkItem.ServiceRequest']/Status$</Property>
+                        </ValueExpression>
+                        <Operator>Equal</Operator>
+                        <ValueExpression>
+                          <Value>{c7b65747-f99e-c108-1e17-3c1062138fc4}</Value>
+                        </ValueExpression>
+                      </SimpleExpression>
+                    </Expression>
+                  </Criteria>
+                </UpdateInstance>
+              </InstanceSubscription>
+              <PollingIntervalInSeconds>60</PollingIntervalInSeconds>
+              <BatchSize>100</BatchSize>
+            </Subscription>
+          </DataSource>
+        </DataSources>
+        <WriteActions>
+          <WriteAction ID="WA" TypeID="SystemCenter!Microsoft.EnterpriseManagement.SystemCenter.Subscription.WindowsWorkflowTaskWriteAction">
+            <Subscription>
+              <VisibleWorkflowStatusUi>true</VisibleWorkflowStatusUi>
+              <EnableBatchProcessing>false</EnableBatchProcessing>
+              <WindowsWorkflowConfiguration>
+                <AssemblyName>Microsoft.EnterpriseManagement.Notifications.Workflows</AssemblyName>
+                <WorkflowTypeName>Microsoft.EnterpriseManagement.Notifications.Workflows.SendNotificationsActivity</WorkflowTypeName>
+                <WorkflowParameters>
+                  <WorkflowParameter Name="SubscriptionId" Type="guid">$MPElement$</WorkflowParameter>
+                  <WorkflowParameter Name="DataItem" Type="string">$Data/.$</WorkflowParameter>
+                  <WorkflowParameter Name="InstanceId" Type="string">$Data/BaseManagedEntityId$</WorkflowParameter>
+                  <WorkflowArrayParameter Name="TemplateIds" Type="string">
+                    <Item>6f7884a4-4eed-dc3b-315a-d039cbace3ad</Item>
+                  </WorkflowArrayParameter>
+                  <WorkflowArrayParameter Name="PrimaryUserList" Type="string">
+                    <Item>d46a191a-ce29-3bd0-8ad3-c8fe03a908b7</Item>
+                  </WorkflowArrayParameter>
+                </WorkflowParameters>
+                <RetryExceptions />
+                <RetryDelaySeconds>60</RetryDelaySeconds>
+                <MaximumRunningTimeSeconds>7200</MaximumRunningTimeSeconds>
+              </WindowsWorkflowConfiguration>
+            </Subscription>
+          </WriteAction>
+        </WriteActions>
+      </Rule>
+      <Rule ID="NotificationSubscription67963718af5f4d8897c5ffea040a2098" Enabled="true" Target="Microsoft_SystemCenter_Library!Microsoft.SystemCenter.SubscriptionWorkflowTarget" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
+        <Category>System</Category>
+        <DataSources>
+          <DataSource ID="DS" TypeID="SystemCenter!Microsoft.SystemCenter.CmdbInstanceSubscription.DataSourceModule">
+            <Subscription>
+              <InstanceSubscription Type="e6c9cf6e-d7fe-1b5d-216c-c3f5d2c7670c">
+                <UpdateInstance>
+                  <Criteria>
+                    <Expression>
+                      <SimpleExpression>
+                        <ValueExpression>
+                          <Property State="Post">$Context/Property[Type='System_WorkItem_ChangeRequest_Library!System.WorkItem.ChangeRequest']/Status$</Property>
+                        </ValueExpression>
+                        <Operator>Equal</Operator>
+                        <ValueExpression>
+                          <Value>{68277330-a0d3-cfdd-298d-d5c31d1d126f}</Value>
+                        </ValueExpression>
+                      </SimpleExpression>
+                    </Expression>
+                  </Criteria>
+                </UpdateInstance>
+              </InstanceSubscription>
+              <PollingIntervalInSeconds>60</PollingIntervalInSeconds>
+              <BatchSize>100</BatchSize>
+            </Subscription>
+          </DataSource>
+        </DataSources>
+        <WriteActions>
+          <WriteAction ID="WA" TypeID="SystemCenter!Microsoft.EnterpriseManagement.SystemCenter.Subscription.WindowsWorkflowTaskWriteAction">
+            <Subscription>
+              <VisibleWorkflowStatusUi>true</VisibleWorkflowStatusUi>
+              <EnableBatchProcessing>false</EnableBatchProcessing>
+              <WindowsWorkflowConfiguration>
+                <AssemblyName>Microsoft.EnterpriseManagement.Notifications.Workflows</AssemblyName>
+                <WorkflowTypeName>Microsoft.EnterpriseManagement.Notifications.Workflows.SendNotificationsActivity</WorkflowTypeName>
+                <WorkflowParameters>
+                  <WorkflowParameter Name="SubscriptionId" Type="guid">$MPElement$</WorkflowParameter>
+                  <WorkflowParameter Name="DataItem" Type="string">$Data/.$</WorkflowParameter>
+                  <WorkflowParameter Name="InstanceId" Type="string">$Data/BaseManagedEntityId$</WorkflowParameter>
+                  <WorkflowArrayParameter Name="TemplateIds" Type="string">
+                    <Item>a733e5da-1591-dcfc-2111-7b2a8da9070f</Item>
+                  </WorkflowArrayParameter>
+                  <WorkflowArrayParameter Name="PrimaryUserList" Type="string">
+                    <Item>d46a191a-ce29-3bd0-8ad3-c8fe03a908b7</Item>
+                  </WorkflowArrayParameter>
+                </WorkflowParameters>
+                <RetryExceptions />
+                <RetryDelaySeconds>60</RetryDelaySeconds>
+                <MaximumRunningTimeSeconds>7200</MaximumRunningTimeSeconds>
+              </WindowsWorkflowConfiguration>
+            </Subscription>
+          </WriteAction>
+        </WriteActions>
+      </Rule>
+      <Rule ID="NotificationSubscriptioncca90eef25f745bdaee423830f8e7c30" Enabled="true" Target="Microsoft_SystemCenter_Library!Microsoft.SystemCenter.SubscriptionWorkflowTarget" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
+        <Category>System</Category>
+        <DataSources>
+          <DataSource ID="DS" TypeID="SystemCenter!Microsoft.SystemCenter.CmdbInstanceSubscription.DataSourceModule">
+            <Subscription>
+              <InstanceSubscription Type="e6c9cf6e-d7fe-1b5d-216c-c3f5d2c7670c">
+                <UpdateInstance>
+                  <Criteria>
+                    <Expression>
+                      <SimpleExpression>
+                        <ValueExpression>
+                          <Property State="Post">$Context/Property[Type='System_WorkItem_ChangeRequest_Library!System.WorkItem.ChangeRequest']/Status$</Property>
+                        </ValueExpression>
+                        <Operator>Equal</Operator>
+                        <ValueExpression>
+                          <Value>{f228d50b-2b5a-010f-b1a4-5c7d95703a9b}</Value>
+                        </ValueExpression>
+                      </SimpleExpression>
+                    </Expression>
+                  </Criteria>
+                </UpdateInstance>
+              </InstanceSubscription>
+              <PollingIntervalInSeconds>60</PollingIntervalInSeconds>
+              <BatchSize>100</BatchSize>
+            </Subscription>
+          </DataSource>
+        </DataSources>
+        <WriteActions>
+          <WriteAction ID="WA" TypeID="SystemCenter!Microsoft.EnterpriseManagement.SystemCenter.Subscription.WindowsWorkflowTaskWriteAction">
+            <Subscription>
+              <VisibleWorkflowStatusUi>true</VisibleWorkflowStatusUi>
+              <EnableBatchProcessing>false</EnableBatchProcessing>
+              <WindowsWorkflowConfiguration>
+                <AssemblyName>Microsoft.EnterpriseManagement.Notifications.Workflows</AssemblyName>
+                <WorkflowTypeName>Microsoft.EnterpriseManagement.Notifications.Workflows.SendNotificationsActivity</WorkflowTypeName>
+                <WorkflowParameters>
+                  <WorkflowParameter Name="SubscriptionId" Type="guid">$MPElement$</WorkflowParameter>
+                  <WorkflowParameter Name="DataItem" Type="string">$Data/.$</WorkflowParameter>
+                  <WorkflowParameter Name="InstanceId" Type="string">$Data/BaseManagedEntityId$</WorkflowParameter>
+                  <WorkflowArrayParameter Name="TemplateIds" Type="string">
+                    <Item>a733e5da-1591-dcfc-2111-7b2a8da9070f</Item>
+                  </WorkflowArrayParameter>
+                  <WorkflowArrayParameter Name="PrimaryUserList" Type="string">
+                    <Item>d46a191a-ce29-3bd0-8ad3-c8fe03a908b7</Item>
+                  </WorkflowArrayParameter>
+                </WorkflowParameters>
+                <RetryExceptions />
+                <RetryDelaySeconds>60</RetryDelaySeconds>
+                <MaximumRunningTimeSeconds>7200</MaximumRunningTimeSeconds>
+              </WindowsWorkflowConfiguration>
+            </Subscription>
+          </WriteAction>
+        </WriteActions>
+      </Rule>
+      <Rule ID="NotificationSubscription13550fd474bf4d698360bab68747e5c0" Enabled="true" Target="Microsoft_SystemCenter_Library!Microsoft.SystemCenter.SubscriptionWorkflowTarget" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
+        <Category>System</Category>
+        <DataSources>
+          <DataSource ID="DS" TypeID="SystemCenter!Microsoft.SystemCenter.CmdbInstanceSubscription.DataSourceModule">
+            <Subscription>
+              <InstanceSubscription Type="a604b942-4c7b-2fb2-28dc-61dc6f465c68">
+                <UpdateInstance>
+                  <Criteria>
+                    <Expression>
+                      <SimpleExpression>
+                        <ValueExpression>
+                          <Property State="Post">$Context/Property[Type='System_WorkItem_Incident_Library!System.WorkItem.Incident']/Status$</Property>
+                        </ValueExpression>
+                        <Operator>Equal</Operator>
+                        <ValueExpression>
+                          <Value>{2b8830b6-59f0-f574-9c2a-f4b4682f1681}</Value>
+                        </ValueExpression>
+                      </SimpleExpression>
+                    </Expression>
+                  </Criteria>
+                </UpdateInstance>
+              </InstanceSubscription>
+              <PollingIntervalInSeconds>60</PollingIntervalInSeconds>
+              <BatchSize>100</BatchSize>
+            </Subscription>
+          </DataSource>
+        </DataSources>
+        <WriteActions>
+          <WriteAction ID="WA" TypeID="SystemCenter!Microsoft.EnterpriseManagement.SystemCenter.Subscription.WindowsWorkflowTaskWriteAction">
+            <Subscription>
+              <VisibleWorkflowStatusUi>true</VisibleWorkflowStatusUi>
+              <EnableBatchProcessing>false</EnableBatchProcessing>
+              <WindowsWorkflowConfiguration>
+                <AssemblyName>Microsoft.EnterpriseManagement.Notifications.Workflows</AssemblyName>
+                <WorkflowTypeName>Microsoft.EnterpriseManagement.Notifications.Workflows.SendNotificationsActivity</WorkflowTypeName>
+                <WorkflowParameters>
+                  <WorkflowParameter Name="SubscriptionId" Type="guid">$MPElement$</WorkflowParameter>
+                  <WorkflowParameter Name="DataItem" Type="string">$Data/.$</WorkflowParameter>
+                  <WorkflowParameter Name="InstanceId" Type="string">$Data/BaseManagedEntityId$</WorkflowParameter>
+                  <WorkflowArrayParameter Name="TemplateIds" Type="string">
+                    <Item>5d822e13-666e-d8f6-dd81-ed898a6001ed</Item>
+                  </WorkflowArrayParameter>
+                  <WorkflowArrayParameter Name="PrimaryUserList" Type="string">
+                    <Item>d46a191a-ce29-3bd0-8ad3-c8fe03a908b7</Item>
+                  </WorkflowArrayParameter>
+                </WorkflowParameters>
+                <RetryExceptions />
+                <RetryDelaySeconds>60</RetryDelaySeconds>
+                <MaximumRunningTimeSeconds>7200</MaximumRunningTimeSeconds>
+              </WindowsWorkflowConfiguration>
+            </Subscription>
+          </WriteAction>
+        </WriteActions>
+      </Rule>
+      <Rule ID="NotificationSubscription5e20857451d3455fb42692878a7305c0" Enabled="true" Target="Microsoft_SystemCenter_Library!Microsoft.SystemCenter.SubscriptionWorkflowTarget" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
+        <Category>System</Category>
+        <DataSources>
+          <DataSource ID="DS" TypeID="SystemCenter!Microsoft.SystemCenter.CmdbInstanceSubscription.DataSourceModule">
+            <Subscription>
+              <InstanceSubscription Type="a604b942-4c7b-2fb2-28dc-61dc6f465c68">
+                <UpdateInstance>
+                  <Criteria>
+                    <Expression>
+                      <SimpleExpression>
+                        <ValueExpression>
+                          <Property State="Post">$Context/Property[Type='System_WorkItem_Incident_Library!System.WorkItem.Incident']/Status$</Property>
+                        </ValueExpression>
+                        <Operator>Equal</Operator>
+                        <ValueExpression>
+                          <Value>{bd0ae7c4-3315-2eb3-7933-82dfc482dbaf}</Value>
+                        </ValueExpression>
+                      </SimpleExpression>
+                    </Expression>
+                  </Criteria>
+                </UpdateInstance>
+              </InstanceSubscription>
+              <PollingIntervalInSeconds>60</PollingIntervalInSeconds>
+              <BatchSize>100</BatchSize>
+            </Subscription>
+          </DataSource>
+        </DataSources>
+        <WriteActions>
+          <WriteAction ID="WA" TypeID="SystemCenter!Microsoft.EnterpriseManagement.SystemCenter.Subscription.WindowsWorkflowTaskWriteAction">
+            <Subscription>
+              <VisibleWorkflowStatusUi>true</VisibleWorkflowStatusUi>
+              <EnableBatchProcessing>false</EnableBatchProcessing>
+              <WindowsWorkflowConfiguration>
+                <AssemblyName>Microsoft.EnterpriseManagement.Notifications.Workflows</AssemblyName>
+                <WorkflowTypeName>Microsoft.EnterpriseManagement.Notifications.Workflows.SendNotificationsActivity</WorkflowTypeName>
+                <WorkflowParameters>
+                  <WorkflowParameter Name="SubscriptionId" Type="guid">$MPElement$</WorkflowParameter>
+                  <WorkflowParameter Name="DataItem" Type="string">$Data/.$</WorkflowParameter>
+                  <WorkflowParameter Name="InstanceId" Type="string">$Data/BaseManagedEntityId$</WorkflowParameter>
+                  <WorkflowArrayParameter Name="TemplateIds" Type="string">
+                    <Item>5d822e13-666e-d8f6-dd81-ed898a6001ed</Item>
+                  </WorkflowArrayParameter>
+                  <WorkflowArrayParameter Name="PrimaryUserList" Type="string">
+                    <Item>d46a191a-ce29-3bd0-8ad3-c8fe03a908b7</Item>
+                  </WorkflowArrayParameter>
+                </WorkflowParameters>
+                <RetryExceptions />
+                <RetryDelaySeconds>60</RetryDelaySeconds>
+                <MaximumRunningTimeSeconds>7200</MaximumRunningTimeSeconds>
+              </WindowsWorkflowConfiguration>
+            </Subscription>
+          </WriteAction>
+        </WriteActions>
+      </Rule>
+    </Rules>
+  </Monitoring>
+  <LanguagePacks>
+    <LanguagePack ID="ENU" IsDefault="true">
+      <DisplayStrings>
+        <DisplayString ElementID="WorkItemGroup.9eae1d2ef97841e1ae101eee5d95c88e">
+          <Name>TestGroup121-SR</Name>
+        </DisplayString>
+        <DisplayString ElementID="WorkItemGroup.9eae1d2ef97841e1ae101eee5d95c88e.Discovery">
+          <Name>TestGroup121-SR_Discovery</Name>
+          <Description>Discovery for Group TestGroup121-SR</Description>
+        </DisplayString>
+        <DisplayString ElementID="NotificationSubscription399deb4a3b724d828d05da3ace84ced3">
+          <Name>TestGroup121-IN-C</Name>
+        </DisplayString>
+        <DisplayString ElementID="NotificationSubscriptionacb020cfcf854adb99f8bb649ea9225f">
+          <Name>TestGroup121-IN-U</Name>
+        </DisplayString>
+        <DisplayString ElementID="NotificationSubscription1b1ac3a221664fda991fbcc0ff3c5669">
+          <Name>TestGroup121-CR-C</Name>
+        </DisplayString>
+        <DisplayString ElementID="NotificationSubscription8d3ec49183364c0a919b15d7d9869dfe">
+          <Name>TestGroup121-CR-U</Name>
+        </DisplayString>
+        <DisplayString ElementID="NotificationSubscriptionea41ad5037b84d25b9e3f004f6832a63">
+          <Name>TestGroup121-PR-C</Name>
+        </DisplayString>
+        <DisplayString ElementID="NotificationSubscriptionf5dde8a4689e4d55980bbdcabd4ed0cb">
+          <Name>TestGroup121-PR-U</Name>
+        </DisplayString>
+        <DisplayString ElementID="NotificationSubscriptionfad7888fea0740048f07623d1cb63fbc">
+          <Name>TestGroup121-SR-C</Name>
+        </DisplayString>
+        <DisplayString ElementID="NotificationSubscription2cddd81838bc4f62a8d3549ff9aa34fa">
+          <Name>TestGroup121-SR-U</Name>
+        </DisplayString>
+        <DisplayString ElementID="NotificationSubscriptionc31401142ccd442892f35c482b896b4e">
+          <Name>TestGroup121-SR-U-Completed</Name>
+        </DisplayString>
+        <DisplayString ElementID="NotificationSubscription89bb029e9080417fa7f8aaad82f441c9">
+          <Name>TestGroup121-SR-U-Closed</Name>
+        </DisplayString>
+        <DisplayString ElementID="NotificationSubscription67963718af5f4d8897c5ffea040a2098">
+          <Name>TestGroup121-CR-U-Completed</Name>
+        </DisplayString>
+        <DisplayString ElementID="NotificationSubscriptioncca90eef25f745bdaee423830f8e7c30">
+          <Name>TestGroup121-CR-U-Closed</Name>
+        </DisplayString>
+        <DisplayString ElementID="NotificationSubscription13550fd474bf4d698360bab68747e5c0">
+          <Name>TestGroup121-IN-U-Resolved</Name>
+        </DisplayString>
+        <DisplayString ElementID="NotificationSubscription5e20857451d3455fb42692878a7305c0">
+          <Name>TestGroup121-IN-U-Closed</Name>
+        </DisplayString>
+      </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPack>
