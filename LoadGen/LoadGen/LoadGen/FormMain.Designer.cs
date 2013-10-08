@@ -79,6 +79,17 @@ namespace Microsoft.SystemCenter.Test.LoadGen
             this.nudDoWorkPause = new System.Windows.Forms.NumericUpDown();
             this.lblNumberOfWorkItemsToGet = new System.Windows.Forms.Label();
             this.nudNumberOfWorkItemsToGet = new System.Windows.Forms.NumericUpDown();
+            this.lblPassword = new System.Windows.Forms.Label();
+            this.txtPassword = new System.Windows.Forms.TextBox();
+            this.radAllUsersThatStartWith = new System.Windows.Forms.RadioButton();
+            this.radUseSpecificUsers = new System.Windows.Forms.RadioButton();
+            this.lblUsernamePrefix = new System.Windows.Forms.Label();
+            this.txtUsernamePrefix = new System.Windows.Forms.TextBox();
+            this.lblMaxNumberOfUsers = new System.Windows.Forms.Label();
+            this.nudMaxNumberOfUsers = new System.Windows.Forms.NumericUpDown();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.chkHideLoaderWindows = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.nudStartupInterval)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudNumberOfIncidentsToCreate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudNumberOfChangeRequestsToCreate)).BeginInit();
@@ -99,11 +110,13 @@ namespace Microsoft.SystemCenter.Test.LoadGen
             ((System.ComponentModel.ISupportInitialize)(this.nudWorkItemQueryUpdateRate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDoWorkPause)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudNumberOfWorkItemsToGet)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMaxNumberOfUsers)).BeginInit();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnStartLoad
             // 
-            this.btnStartLoad.Location = new System.Drawing.Point(758, 396);
+            this.btnStartLoad.Location = new System.Drawing.Point(756, 456);
             this.btnStartLoad.Name = "btnStartLoad";
             this.btnStartLoad.Size = new System.Drawing.Size(75, 23);
             this.btnStartLoad.TabIndex = 23;
@@ -140,7 +153,7 @@ namespace Microsoft.SystemCenter.Test.LoadGen
             // lblServerName
             // 
             this.lblServerName.AutoSize = true;
-            this.lblServerName.Location = new System.Drawing.Point(9, 57);
+            this.lblServerName.Location = new System.Drawing.Point(623, 411);
             this.lblServerName.Name = "lblServerName";
             this.lblServerName.Size = new System.Drawing.Size(70, 13);
             this.lblServerName.TabIndex = 6;
@@ -148,11 +161,11 @@ namespace Microsoft.SystemCenter.Test.LoadGen
             // 
             // txtServerName
             // 
-            this.txtServerName.Location = new System.Drawing.Point(12, 74);
+            this.txtServerName.Location = new System.Drawing.Point(626, 428);
             this.txtServerName.Name = "txtServerName";
-            this.txtServerName.Size = new System.Drawing.Size(138, 20);
+            this.txtServerName.Size = new System.Drawing.Size(205, 20);
             this.txtServerName.TabIndex = 1;
-            this.txtServerName.Text = "scsm2.contoso.com";
+            this.txtServerName.Text = "scsm.contoso.com";
             // 
             // lblNumberOfIncidentToCreate
             // 
@@ -536,7 +549,7 @@ namespace Microsoft.SystemCenter.Test.LoadGen
             // 
             // nudNumberOfWorkingHoursPerDay
             // 
-            this.nudNumberOfWorkingHoursPerDay.Location = new System.Drawing.Point(9, 124);
+            this.nudNumberOfWorkingHoursPerDay.Location = new System.Drawing.Point(9, 75);
             this.nudNumberOfWorkingHoursPerDay.Maximum = new decimal(new int[] {
             24,
             0,
@@ -554,7 +567,7 @@ namespace Microsoft.SystemCenter.Test.LoadGen
             // lblNumberOfWorkingHoursPerDay
             // 
             this.lblNumberOfWorkingHoursPerDay.AutoSize = true;
-            this.lblNumberOfWorkingHoursPerDay.Location = new System.Drawing.Point(6, 107);
+            this.lblNumberOfWorkingHoursPerDay.Location = new System.Drawing.Point(6, 58);
             this.lblNumberOfWorkingHoursPerDay.Name = "lblNumberOfWorkingHoursPerDay";
             this.lblNumberOfWorkingHoursPerDay.Size = new System.Drawing.Size(150, 13);
             this.lblNumberOfWorkingHoursPerDay.TabIndex = 38;
@@ -562,7 +575,7 @@ namespace Microsoft.SystemCenter.Test.LoadGen
             // 
             // txtDomain
             // 
-            this.txtDomain.Location = new System.Drawing.Point(12, 173);
+            this.txtDomain.Location = new System.Drawing.Point(27, 57);
             this.txtDomain.Name = "txtDomain";
             this.txtDomain.Size = new System.Drawing.Size(138, 20);
             this.txtDomain.TabIndex = 4;
@@ -571,7 +584,7 @@ namespace Microsoft.SystemCenter.Test.LoadGen
             // lblDomain
             // 
             this.lblDomain.AutoSize = true;
-            this.lblDomain.Location = new System.Drawing.Point(9, 156);
+            this.lblDomain.Location = new System.Drawing.Point(24, 40);
             this.lblDomain.Name = "lblDomain";
             this.lblDomain.Size = new System.Drawing.Size(46, 13);
             this.lblDomain.TabIndex = 40;
@@ -579,14 +592,14 @@ namespace Microsoft.SystemCenter.Test.LoadGen
             // 
             // nudWorkItemQueryUpdateRate
             // 
-            this.nudWorkItemQueryUpdateRate.Location = new System.Drawing.Point(12, 224);
+            this.nudWorkItemQueryUpdateRate.Location = new System.Drawing.Point(9, 123);
             this.nudWorkItemQueryUpdateRate.Maximum = new decimal(new int[] {
             10000000,
             0,
             0,
             0});
             this.nudWorkItemQueryUpdateRate.Minimum = new decimal(new int[] {
-            10000,
+            1,
             0,
             0,
             0});
@@ -602,7 +615,7 @@ namespace Microsoft.SystemCenter.Test.LoadGen
             // lblWorkItemUpdateQueryRate
             // 
             this.lblWorkItemUpdateQueryRate.AutoSize = true;
-            this.lblWorkItemUpdateQueryRate.Location = new System.Drawing.Point(9, 207);
+            this.lblWorkItemUpdateQueryRate.Location = new System.Drawing.Point(6, 106);
             this.lblWorkItemUpdateQueryRate.Name = "lblWorkItemUpdateQueryRate";
             this.lblWorkItemUpdateQueryRate.Size = new System.Drawing.Size(122, 13);
             this.lblWorkItemUpdateQueryRate.TabIndex = 42;
@@ -611,11 +624,11 @@ namespace Microsoft.SystemCenter.Test.LoadGen
             // lblSupportGroupFilePath
             // 
             this.lblSupportGroupFilePath.AutoSize = true;
-            this.lblSupportGroupFilePath.Location = new System.Drawing.Point(9, 345);
+            this.lblSupportGroupFilePath.Location = new System.Drawing.Point(33, 431);
             this.lblSupportGroupFilePath.Name = "lblSupportGroupFilePath";
-            this.lblSupportGroupFilePath.Size = new System.Drawing.Size(117, 13);
+            this.lblSupportGroupFilePath.Size = new System.Drawing.Size(103, 13);
             this.lblSupportGroupFilePath.TabIndex = 44;
-            this.lblSupportGroupFilePath.Text = "Support group file path:";
+            this.lblSupportGroupFilePath.Text = "Usernames file path:";
             // 
             // openFileDialogSupportGroupFile
             // 
@@ -625,15 +638,15 @@ namespace Microsoft.SystemCenter.Test.LoadGen
             // 
             // txtSupportGroupFilePath
             // 
-            this.txtSupportGroupFilePath.Location = new System.Drawing.Point(9, 362);
+            this.txtSupportGroupFilePath.Location = new System.Drawing.Point(33, 448);
             this.txtSupportGroupFilePath.Name = "txtSupportGroupFilePath";
-            this.txtSupportGroupFilePath.Size = new System.Drawing.Size(602, 20);
+            this.txtSupportGroupFilePath.Size = new System.Drawing.Size(386, 20);
             this.txtSupportGroupFilePath.TabIndex = 21;
-            this.txtSupportGroupFilePath.Text = "C:\\PerfTestHarness\\SupportGroups200.txt";
+            this.txtSupportGroupFilePath.Text = "C:\\Software\\SCSMPerfTestHarness\\TestUsers5.txt";
             // 
             // btnBrowseForSupportGroupFilePath
             // 
-            this.btnBrowseForSupportGroupFilePath.Location = new System.Drawing.Point(617, 360);
+            this.btnBrowseForSupportGroupFilePath.Location = new System.Drawing.Point(416, 175);
             this.btnBrowseForSupportGroupFilePath.Name = "btnBrowseForSupportGroupFilePath";
             this.btnBrowseForSupportGroupFilePath.Size = new System.Drawing.Size(75, 23);
             this.btnBrowseForSupportGroupFilePath.TabIndex = 22;
@@ -644,7 +657,7 @@ namespace Microsoft.SystemCenter.Test.LoadGen
             // lblDoWorkPause
             // 
             this.lblDoWorkPause.AutoSize = true;
-            this.lblDoWorkPause.Location = new System.Drawing.Point(12, 251);
+            this.lblDoWorkPause.Location = new System.Drawing.Point(9, 156);
             this.lblDoWorkPause.Name = "lblDoWorkPause";
             this.lblDoWorkPause.Size = new System.Drawing.Size(104, 13);
             this.lblDoWorkPause.TabIndex = 45;
@@ -652,9 +665,14 @@ namespace Microsoft.SystemCenter.Test.LoadGen
             // 
             // nudDoWorkPause
             // 
-            this.nudDoWorkPause.Location = new System.Drawing.Point(12, 268);
+            this.nudDoWorkPause.Location = new System.Drawing.Point(9, 173);
             this.nudDoWorkPause.Maximum = new decimal(new int[] {
             10000000,
+            0,
+            0,
+            0});
+            this.nudDoWorkPause.Minimum = new decimal(new int[] {
+            1,
             0,
             0,
             0});
@@ -670,7 +688,7 @@ namespace Microsoft.SystemCenter.Test.LoadGen
             // lblNumberOfWorkItemsToGet
             // 
             this.lblNumberOfWorkItemsToGet.AutoSize = true;
-            this.lblNumberOfWorkItemsToGet.Location = new System.Drawing.Point(9, 295);
+            this.lblNumberOfWorkItemsToGet.Location = new System.Drawing.Point(6, 208);
             this.lblNumberOfWorkItemsToGet.Name = "lblNumberOfWorkItemsToGet";
             this.lblNumberOfWorkItemsToGet.Size = new System.Drawing.Size(142, 13);
             this.lblNumberOfWorkItemsToGet.TabIndex = 47;
@@ -678,9 +696,9 @@ namespace Microsoft.SystemCenter.Test.LoadGen
             // 
             // nudNumberOfWorkItemsToGet
             // 
-            this.nudNumberOfWorkItemsToGet.Location = new System.Drawing.Point(12, 312);
+            this.nudNumberOfWorkItemsToGet.Location = new System.Drawing.Point(9, 225);
             this.nudNumberOfWorkItemsToGet.Maximum = new decimal(new int[] {
-            10000,
+            100000,
             0,
             0,
             0});
@@ -693,22 +711,149 @@ namespace Microsoft.SystemCenter.Test.LoadGen
             0,
             0});
             // 
+            // lblPassword
+            // 
+            this.lblPassword.AutoSize = true;
+            this.lblPassword.Location = new System.Drawing.Point(188, 40);
+            this.lblPassword.Name = "lblPassword";
+            this.lblPassword.Size = new System.Drawing.Size(56, 13);
+            this.lblPassword.TabIndex = 49;
+            this.lblPassword.Text = "Password:";
+            // 
+            // txtPassword
+            // 
+            this.txtPassword.Location = new System.Drawing.Point(191, 56);
+            this.txtPassword.Name = "txtPassword";
+            this.txtPassword.Size = new System.Drawing.Size(219, 20);
+            this.txtPassword.TabIndex = 50;
+            this.txtPassword.Text = "SMX#2001";
+            this.txtPassword.UseSystemPasswordChar = true;
+            // 
+            // radAllUsersThatStartWith
+            // 
+            this.radAllUsersThatStartWith.AutoSize = true;
+            this.radAllUsersThatStartWith.Checked = true;
+            this.radAllUsersThatStartWith.Location = new System.Drawing.Point(9, 351);
+            this.radAllUsersThatStartWith.Name = "radAllUsersThatStartWith";
+            this.radAllUsersThatStartWith.Size = new System.Drawing.Size(416, 17);
+            this.radAllUsersThatStartWith.TabIndex = 51;
+            this.radAllUsersThatStartWith.TabStop = true;
+            this.radAllUsersThatStartWith.Text = "Use users from the SCSM CMDB that have a username that starts with specific text";
+            this.radAllUsersThatStartWith.UseVisualStyleBackColor = true;
+            // 
+            // radUseSpecificUsers
+            // 
+            this.radUseSpecificUsers.AutoSize = true;
+            this.radUseSpecificUsers.Location = new System.Drawing.Point(9, 411);
+            this.radUseSpecificUsers.Name = "radUseSpecificUsers";
+            this.radUseSpecificUsers.Size = new System.Drawing.Size(214, 17);
+            this.radUseSpecificUsers.TabIndex = 52;
+            this.radUseSpecificUsers.Text = "Use specific users from a list in a text file";
+            this.radUseSpecificUsers.UseVisualStyleBackColor = true;
+            // 
+            // lblUsernamePrefix
+            // 
+            this.lblUsernamePrefix.AutoSize = true;
+            this.lblUsernamePrefix.Location = new System.Drawing.Point(33, 371);
+            this.lblUsernamePrefix.Name = "lblUsernamePrefix";
+            this.lblUsernamePrefix.Size = new System.Drawing.Size(129, 13);
+            this.lblUsernamePrefix.TabIndex = 53;
+            this.lblUsernamePrefix.Text = "Usernames that start with:";
+            // 
+            // txtUsernamePrefix
+            // 
+            this.txtUsernamePrefix.Location = new System.Drawing.Point(36, 388);
+            this.txtUsernamePrefix.Name = "txtUsernamePrefix";
+            this.txtUsernamePrefix.Size = new System.Drawing.Size(138, 20);
+            this.txtUsernamePrefix.TabIndex = 54;
+            this.txtUsernamePrefix.Text = "TestUser";
+            // 
+            // lblMaxNumberOfUsers
+            // 
+            this.lblMaxNumberOfUsers.AutoSize = true;
+            this.lblMaxNumberOfUsers.Location = new System.Drawing.Point(200, 370);
+            this.lblMaxNumberOfUsers.Name = "lblMaxNumberOfUsers";
+            this.lblMaxNumberOfUsers.Size = new System.Drawing.Size(108, 13);
+            this.lblMaxNumberOfUsers.TabIndex = 55;
+            this.lblMaxNumberOfUsers.Text = "Max number of users:";
+            // 
+            // nudMaxNumberOfUsers
+            // 
+            this.nudMaxNumberOfUsers.Location = new System.Drawing.Point(200, 387);
+            this.nudMaxNumberOfUsers.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.nudMaxNumberOfUsers.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudMaxNumberOfUsers.Name = "nudMaxNumberOfUsers";
+            this.nudMaxNumberOfUsers.Size = new System.Drawing.Size(120, 20);
+            this.nudMaxNumberOfUsers.TabIndex = 56;
+            this.nudMaxNumberOfUsers.Value = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.txtDomain);
+            this.groupBox1.Controls.Add(this.lblDomain);
+            this.groupBox1.Controls.Add(this.lblPassword);
+            this.groupBox1.Controls.Add(this.txtPassword);
+            this.groupBox1.Controls.Add(this.btnBrowseForSupportGroupFilePath);
+            this.groupBox1.Location = new System.Drawing.Point(9, 270);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(602, 212);
+            this.groupBox1.TabIndex = 57;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Select a method for determining which users to log in as for the loader.exe proce" +
+    "sses";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(24, 20);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(387, 13);
+            this.label1.TabIndex = 51;
+            this.label1.Text = "Note: all users must be in the specified domain and have the specified password:";
+            // 
+            // chkHideLoaderWindows
+            // 
+            this.chkHideLoaderWindows.AutoSize = true;
+            this.chkHideLoaderWindows.Location = new System.Drawing.Point(626, 387);
+            this.chkHideLoaderWindows.Name = "chkHideLoaderWindows";
+            this.chkHideLoaderWindows.Size = new System.Drawing.Size(124, 17);
+            this.chkHideLoaderWindows.TabIndex = 58;
+            this.chkHideLoaderWindows.Text = "Hide loader windows";
+            this.chkHideLoaderWindows.UseVisualStyleBackColor = true;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(876, 442);
+            this.ClientSize = new System.Drawing.Size(876, 491);
+            this.Controls.Add(this.chkHideLoaderWindows);
+            this.Controls.Add(this.nudMaxNumberOfUsers);
+            this.Controls.Add(this.lblMaxNumberOfUsers);
+            this.Controls.Add(this.txtUsernamePrefix);
+            this.Controls.Add(this.lblUsernamePrefix);
+            this.Controls.Add(this.radUseSpecificUsers);
+            this.Controls.Add(this.radAllUsersThatStartWith);
             this.Controls.Add(this.nudNumberOfWorkItemsToGet);
             this.Controls.Add(this.lblNumberOfWorkItemsToGet);
             this.Controls.Add(this.nudDoWorkPause);
             this.Controls.Add(this.lblDoWorkPause);
-            this.Controls.Add(this.btnBrowseForSupportGroupFilePath);
             this.Controls.Add(this.txtSupportGroupFilePath);
             this.Controls.Add(this.lblSupportGroupFilePath);
             this.Controls.Add(this.nudWorkItemQueryUpdateRate);
             this.Controls.Add(this.lblWorkItemUpdateQueryRate);
-            this.Controls.Add(this.txtDomain);
-            this.Controls.Add(this.lblDomain);
             this.Controls.Add(this.nudNumberOfWorkingHoursPerDay);
             this.Controls.Add(this.lblNumberOfWorkingHoursPerDay);
             this.Controls.Add(this.nudPercentOfWorkersCreatingReleases);
@@ -746,8 +891,10 @@ namespace Microsoft.SystemCenter.Test.LoadGen
             this.Controls.Add(this.nudStartupInterval);
             this.Controls.Add(this.lblThreadStartupInterval);
             this.Controls.Add(this.btnStartLoad);
+            this.Controls.Add(this.groupBox1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "FormMain";
-            this.Text = "LoadGen";
+            this.Text = "SCSM Load Generator";
             ((System.ComponentModel.ISupportInitialize)(this.nudStartupInterval)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudNumberOfIncidentsToCreate)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudNumberOfChangeRequestsToCreate)).EndInit();
@@ -768,6 +915,9 @@ namespace Microsoft.SystemCenter.Test.LoadGen
             ((System.ComponentModel.ISupportInitialize)(this.nudWorkItemQueryUpdateRate)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDoWorkPause)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudNumberOfWorkItemsToGet)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMaxNumberOfUsers)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -824,5 +974,16 @@ namespace Microsoft.SystemCenter.Test.LoadGen
         private NumericUpDown nudDoWorkPause;
         private Label lblNumberOfWorkItemsToGet;
         private NumericUpDown nudNumberOfWorkItemsToGet;
+        private Label lblPassword;
+        private TextBox txtPassword;
+        private RadioButton radAllUsersThatStartWith;
+        private RadioButton radUseSpecificUsers;
+        private Label lblUsernamePrefix;
+        private TextBox txtUsernamePrefix;
+        private Label lblMaxNumberOfUsers;
+        private NumericUpDown nudMaxNumberOfUsers;
+        private GroupBox groupBox1;
+        private Label label1;
+        private CheckBox chkHideLoaderWindows;
     }
 }

@@ -13,6 +13,8 @@ using System.Collections.ObjectModel;
 using Microsoft.EnterpriseManagement;
 using Microsoft.EnterpriseManagement.Common;
 using Microsoft.EnterpriseManagement.Packaging;
+using Microsoft.EnterpriseManagement.Configuration;
+using Microsoft.EnterpriseManagement.Helper;
 
 namespace Microsoft.SystemCenter.Test.LoadGen
 {
@@ -23,118 +25,155 @@ namespace Microsoft.SystemCenter.Test.LoadGen
             InitializeComponent();
         }
 
-        private void btnStartLoad_Click(object sender, EventArgs e)
-        {
-            StartLoad((int)nudStartupInterval.Value);
-        }
-
         public void StartLoad(int intStartupInterval)
         {
             Collection<Process> listProcesses = new Collection<Process>();
             DateTime dtBegin = DateTime.UtcNow;
+            int intUserCount = 0;
+            List<string> listUsers = new List<string>();
 
-            string strSupportGroupFilePath = txtSupportGroupFilePath.Text;
-
-            string[] strSupportGroups = System.IO.File.ReadAllLines(strSupportGroupFilePath);
-
-            int intSupportGroupCount = strSupportGroups.Length;
-            int intWorkersCreatingIncidents = (int)Math.Abs(intSupportGroupCount * nudPercentOfWorkersCreatingIncidents.Value / 100);
-            int intWorkersCreatingChangeRequests = (int)Math.Abs(intSupportGroupCount * nudPercentOfWorkersCreatingChangeRequests.Value / 100);
-            int intWorkersCreatingServiceRequests = (int)Math.Abs(intSupportGroupCount * nudPercentOfWorkersCreatingServiceRequests.Value / 100);
-            int intWorkersCreatingProblems = (int)Math.Abs(intSupportGroupCount * nudPercentOfWorkersCreatingProblems.Value / 100);
-            int intWorkersCreatingReleases = (int)Math.Abs(intSupportGroupCount * nudPercentOfWorkersCreatingReleases.Value / 100);
-
-            int intUpperLimitOfIncidentWorkers = intWorkersCreatingIncidents;
-            int intUpperLimitOfChangeRequestWorkers = intUpperLimitOfIncidentWorkers + intWorkersCreatingChangeRequests < intSupportGroupCount ? intUpperLimitOfIncidentWorkers + intWorkersCreatingChangeRequests : 0;
-            int intUpperLimitOfServiceRequestWorkers = intUpperLimitOfChangeRequestWorkers + intWorkersCreatingServiceRequests < intSupportGroupCount ? intUpperLimitOfChangeRequestWorkers + intWorkersCreatingServiceRequests : 0;
-            int intUpperLimitOfProblemWorkers = intUpperLimitOfServiceRequestWorkers + intWorkersCreatingProblems < intSupportGroupCount ? intUpperLimitOfServiceRequestWorkers + intWorkersCreatingProblems : 0;
-            int intUpperLimitOfReleaseWorkers = intUpperLimitOfProblemWorkers + intWorkersCreatingReleases < intSupportGroupCount ? intUpperLimitOfProblemWorkers + intWorkersCreatingReleases : 0;
-
-            int intNumberOfIncidentsEachWorkerCreates = CalculateNumberOfWorkItemsPerWorker((int)nudNumberOfIncidentsToCreate.Value , intWorkersCreatingIncidents);
-            int intNumberOfIncidentsEachWorkerCreatesPerDay = CalculateNumberOfWorkItemsPerWorker((int)nudNumberOfIncidentsToCreatePerDay.Value , intWorkersCreatingIncidents);
-            int intNumberOfChangeRequestsEachWorkerCreates = CalculateNumberOfWorkItemsPerWorker((int)nudNumberOfChangeRequestsToCreate.Value , intWorkersCreatingChangeRequests);
-            int intNumberOfChangeRequestsEachWorkerCreatesPerDay = CalculateNumberOfWorkItemsPerWorker((int)nudNumberOfChangeRequestsToCreatePerDay.Value , intWorkersCreatingChangeRequests);
-            int intNumberOfServiceRequestsEachWorkerCreates = CalculateNumberOfWorkItemsPerWorker((int)nudNumberOfServiceRequestsToCreate.Value , intWorkersCreatingServiceRequests);
-            int intNumberOfServiceRequestsEachWorkerCreatesPerDay = CalculateNumberOfWorkItemsPerWorker((int)nudNumberOfServiceRequestsToCreatePerDay.Value , intWorkersCreatingServiceRequests);
-            int intNumberOfProblemsEachWorkerCreates = CalculateNumberOfWorkItemsPerWorker((int)nudNumberOfProblemsToCreate.Value , intWorkersCreatingProblems);
-            int intNumberOfProblemsEachWorkerCreatesPerDay = CalculateNumberOfWorkItemsPerWorker((int)nudNumberOfProblemsToCreatePerDay.Value , intWorkersCreatingProblems);
-            int intNumberOfReleasesEachWorkerCreates = CalculateNumberOfWorkItemsPerWorker((int)nudNumberOfReleasesToCreate.Value , intWorkersCreatingReleases);
-            int intNumberOfReleasesEachWorkerCreatesPerDay = CalculateNumberOfWorkItemsPerWorker((int)nudNumberOfReleasesToCreatePerDay.Value , intWorkersCreatingReleases);
-
-            int i= 1;
-
-            CreatePerformanceCounters();
-
-            foreach(string strSupportGroup in strSupportGroups)
+            if (radUseSpecificUsers.Checked)
             {
-
-                Worker worker = new Worker();
-                string strUserName = strSupportGroup + "User";
-                string strWorkItemClassToCreate = null;
-
-                if (i <= intUpperLimitOfIncidentWorkers)
+                string strUserListFilePath = txtSupportGroupFilePath.Text;
+                string[] strUserList = System.IO.File.ReadAllLines(strUserListFilePath);
+                foreach(string strUser in strUserList)
+                    listUsers.Add(strUser);
+                intUserCount = strUserList.Length;
+            }
+            else
+            {
+                EnterpriseManagementGroup emg = new EnterpriseManagementGroup(txtServerName.Text); 
+                ManagementPackClass mpcUser = Helper.GetClassByName("System.Domain.User", emg);
+                ObjectQueryOptions oqoTopN = new ObjectQueryOptions();
+                oqoTopN.ObjectRetrievalMode = ObjectRetrievalOptions.Buffered;
+                oqoTopN.MaxResultCount = (int)nudMaxNumberOfUsers.Value;
+                oqoTopN.AddPropertyToRetrieve(Helper.GetManagementPackClassPropertyByName(mpcUser.Name,"UserName",emg));
+                oqoTopN.AddPropertyToRetrieve(Helper.GetManagementPackClassPropertyByName(mpcUser.Name,"Domain",emg));
+                EnterpriseManagementObjectCriteria emocUser = new EnterpriseManagementObjectCriteria(String.Format("UserName LIKE '{0}%'", txtUsernamePrefix.Text), mpcUser);
+                IObjectReader<EnterpriseManagementObject> orUsers = emg.EntityObjects.GetObjectReader<EnterpriseManagementObject>(emocUser, oqoTopN);
+                if (orUsers.Count > 0)
                 {
-                    strWorkItemClassToCreate = "Incident";
-                }
-                else if (i > intUpperLimitOfIncidentWorkers &&
-                         i <= intUpperLimitOfChangeRequestWorkers)
-                {
-                    strWorkItemClassToCreate = "ChangeRequest";
-                }
-                else if (i > intUpperLimitOfChangeRequestWorkers &&
-                         i <= intUpperLimitOfServiceRequestWorkers)
-                {
-                    strWorkItemClassToCreate = "ServiceRequest";
-                }
-                else if (i > intUpperLimitOfServiceRequestWorkers &&
-                         i <= intUpperLimitOfProblemWorkers)
-                {
-                    strWorkItemClassToCreate = "Problem";
+                    foreach (EnterpriseManagementObject emoUser in orUsers)
+                    {
+                        listUsers.Add(emoUser[mpcUser,"UserName"].Value.ToString());
+                    }
                 }
                 else
                 {
-                    strWorkItemClassToCreate = "Release";
+                    MessageBox.Show(String.Format("There are no users in the SCSM CMDB with usernames that start with: '{0}'", lblUsernamePrefix.Text));
                 }
-
-                int intProcID = worker.Start(   strUserName, 
-                                                txtServerName.Text, 
-                                                strWorkItemClassToCreate,
-                                                txtDomain.Text,
-                                                intNumberOfIncidentsEachWorkerCreatesPerDay,
-                                                intNumberOfIncidentsEachWorkerCreates,
-                                                intNumberOfChangeRequestsEachWorkerCreatesPerDay,
-                                                intNumberOfChangeRequestsEachWorkerCreates,
-                                                intNumberOfServiceRequestsEachWorkerCreatesPerDay,
-                                                intNumberOfServiceRequestsEachWorkerCreates,
-                                                intNumberOfProblemsEachWorkerCreatesPerDay,
-                                                intNumberOfProblemsEachWorkerCreates,
-                                                intNumberOfReleasesEachWorkerCreatesPerDay,
-                                                intNumberOfReleasesEachWorkerCreates,
-                                                (int)nudNumberOfWorkingHoursPerDay.Value,
-                                                (int)nudWorkItemQueryUpdateRate.Value, 
-                                                (int)nudDoWorkPause.Value,
-                                                (int)nudNumberOfWorkItemsToGet.Value
-                                                );
-
-                //Staggered start so we arent creating a bunch of EMGs all at the same time.
-                Thread.Sleep(intStartupInterval);
-                i++;
+                intUserCount = orUsers.Count;
             }
-            
-            bool bAllProcessesExited = false;
-            //Wait until all threads are aborted
-            do
+
+            if (intUserCount < 1)
             {
-                bAllProcessesExited = true;
-                foreach (Process process in listProcesses)
+                MessageBox.Show("There are no users.");
+            }
+            else
+            {
+                int intWorkersCreatingIncidents = (int)Math.Abs(intUserCount * nudPercentOfWorkersCreatingIncidents.Value / 100);
+                int intWorkersCreatingChangeRequests = (int)Math.Abs(intUserCount * nudPercentOfWorkersCreatingChangeRequests.Value / 100);
+                int intWorkersCreatingServiceRequests = (int)Math.Abs(intUserCount * nudPercentOfWorkersCreatingServiceRequests.Value / 100);
+                int intWorkersCreatingProblems = (int)Math.Abs(intUserCount * nudPercentOfWorkersCreatingProblems.Value / 100);
+                int intWorkersCreatingReleases = (int)Math.Abs(intUserCount * nudPercentOfWorkersCreatingReleases.Value / 100);
+
+                int intUpperLimitOfIncidentWorkers = intWorkersCreatingIncidents;
+                int intUpperLimitOfChangeRequestWorkers = intUpperLimitOfIncidentWorkers + intWorkersCreatingChangeRequests < intUserCount ? intUpperLimitOfIncidentWorkers + intWorkersCreatingChangeRequests : 0;
+                int intUpperLimitOfServiceRequestWorkers = intUpperLimitOfChangeRequestWorkers + intWorkersCreatingServiceRequests < intUserCount ? intUpperLimitOfChangeRequestWorkers + intWorkersCreatingServiceRequests : 0;
+                int intUpperLimitOfProblemWorkers = intUpperLimitOfServiceRequestWorkers + intWorkersCreatingProblems < intUserCount ? intUpperLimitOfServiceRequestWorkers + intWorkersCreatingProblems : 0;
+                int intUpperLimitOfReleaseWorkers = intUpperLimitOfProblemWorkers + intWorkersCreatingReleases < intUserCount ? intUpperLimitOfProblemWorkers + intWorkersCreatingReleases : 0;
+
+                int intNumberOfIncidentsEachWorkerCreates = CalculateNumberOfWorkItemsPerWorker((int)nudNumberOfIncidentsToCreate.Value, intWorkersCreatingIncidents);
+                int intNumberOfIncidentsEachWorkerCreatesPerDay = CalculateNumberOfWorkItemsPerWorker((int)nudNumberOfIncidentsToCreatePerDay.Value, intWorkersCreatingIncidents);
+                int intNumberOfChangeRequestsEachWorkerCreates = CalculateNumberOfWorkItemsPerWorker((int)nudNumberOfChangeRequestsToCreate.Value, intWorkersCreatingChangeRequests);
+                int intNumberOfChangeRequestsEachWorkerCreatesPerDay = CalculateNumberOfWorkItemsPerWorker((int)nudNumberOfChangeRequestsToCreatePerDay.Value, intWorkersCreatingChangeRequests);
+                int intNumberOfServiceRequestsEachWorkerCreates = CalculateNumberOfWorkItemsPerWorker((int)nudNumberOfServiceRequestsToCreate.Value, intWorkersCreatingServiceRequests);
+                int intNumberOfServiceRequestsEachWorkerCreatesPerDay = CalculateNumberOfWorkItemsPerWorker((int)nudNumberOfServiceRequestsToCreatePerDay.Value, intWorkersCreatingServiceRequests);
+                int intNumberOfProblemsEachWorkerCreates = CalculateNumberOfWorkItemsPerWorker((int)nudNumberOfProblemsToCreate.Value, intWorkersCreatingProblems);
+                int intNumberOfProblemsEachWorkerCreatesPerDay = CalculateNumberOfWorkItemsPerWorker((int)nudNumberOfProblemsToCreatePerDay.Value, intWorkersCreatingProblems);
+                int intNumberOfReleasesEachWorkerCreates = CalculateNumberOfWorkItemsPerWorker((int)nudNumberOfReleasesToCreate.Value, intWorkersCreatingReleases);
+                int intNumberOfReleasesEachWorkerCreatesPerDay = CalculateNumberOfWorkItemsPerWorker((int)nudNumberOfReleasesToCreatePerDay.Value, intWorkersCreatingReleases);
+
+                int i = 1;
+
+                CreatePerformanceCounters();
+
+                foreach (string strUserName in listUsers)
                 {
-                    if (!process.HasExited) { bAllProcessesExited = false; }
+                    Worker worker = new Worker();
+                    string strWorkItemClassToCreate = null;
+
+                    if (i <= intUpperLimitOfIncidentWorkers)
+                    {
+                        strWorkItemClassToCreate = "Incident";
+                    }
+                    else if (i > intUpperLimitOfIncidentWorkers &&
+                             i <= intUpperLimitOfChangeRequestWorkers)
+                    {
+                        strWorkItemClassToCreate = "ChangeRequest";
+                    }
+                    else if (i > intUpperLimitOfChangeRequestWorkers &&
+                             i <= intUpperLimitOfServiceRequestWorkers)
+                    {
+                        strWorkItemClassToCreate = "ServiceRequest";
+                    }
+                    else if (i > intUpperLimitOfServiceRequestWorkers &&
+                             i <= intUpperLimitOfProblemWorkers)
+                    {
+                        strWorkItemClassToCreate = "Problem";
+                    }
+                    else
+                    {
+                        strWorkItemClassToCreate = "Release";
+                    }
+
+                    int intProcID = worker.Start(strUserName,
+                                                    txtServerName.Text,
+                                                    strWorkItemClassToCreate,
+                                                    txtDomain.Text,
+                                                    txtPassword.Text,
+                                                    intNumberOfIncidentsEachWorkerCreatesPerDay,
+                                                    intNumberOfIncidentsEachWorkerCreates,
+                                                    intNumberOfChangeRequestsEachWorkerCreatesPerDay,
+                                                    intNumberOfChangeRequestsEachWorkerCreates,
+                                                    intNumberOfServiceRequestsEachWorkerCreatesPerDay,
+                                                    intNumberOfServiceRequestsEachWorkerCreates,
+                                                    intNumberOfProblemsEachWorkerCreatesPerDay,
+                                                    intNumberOfProblemsEachWorkerCreates,
+                                                    intNumberOfReleasesEachWorkerCreatesPerDay,
+                                                    intNumberOfReleasesEachWorkerCreates,
+                                                    (int)nudNumberOfWorkingHoursPerDay.Value,
+                                                    (int)nudWorkItemQueryUpdateRate.Value,
+                                                    (int)nudDoWorkPause.Value,
+                                                    (int)nudNumberOfWorkItemsToGet.Value,
+                                                    chkHideLoaderWindows.Checked
+                                                    );
+
+                    //Staggered start so we arent creating a bunch of EMGs all at the same time.
+                    Thread.Sleep(intStartupInterval);
+                    i++;
                 }
-                Thread.Sleep(3000);
-            } while (!bAllProcessesExited);
-            DateTime dtEnd = DateTime.UtcNow;
-            TimeSpan tsTotalElapsedTime = dtEnd - dtBegin;
-            MessageBox.Show("Total Elapsed Time: " + tsTotalElapsedTime.ToString());
+
+                bool bAllProcessesExited = false;
+                //Wait until all threads are aborted
+                do
+                {
+                    bAllProcessesExited = true;
+                    foreach (Process process in listProcesses)
+                    {
+                        if (!process.HasExited) { bAllProcessesExited = false; }
+                    }
+                    Thread.Sleep(3000);
+                } while (!bAllProcessesExited);
+                DateTime dtEnd = DateTime.UtcNow;
+                TimeSpan tsTotalElapsedTime = dtEnd - dtBegin;
+                MessageBox.Show("Total Elapsed Time: " + tsTotalElapsedTime.ToString());
+            }
+        }
+
+        private void btnStartLoad_Click(object sender, EventArgs e)
+        {
+            StartLoad((int)nudStartupInterval.Value);
         }
 
         private void btnBrowseForSupportGroupFilePath_Click(object sender, EventArgs e)
@@ -205,6 +244,7 @@ namespace Microsoft.SystemCenter.Test.LoadGen
                             string strServerName, 
                             string strWorkItemClassToCreate,
                             string strDomain,
+                            string strPassword,
                             int intIncidnetsPerDay,
                             int intIncidnetsToCreate,
                             int intChangeRequestsPerDay,
@@ -218,10 +258,11 @@ namespace Microsoft.SystemCenter.Test.LoadGen
                             int intNumberOfWorkingHoursPerDay,
                             int intWorkItemQueryUpdateRate,
                             int intDoWorkPause,
-                            int intNumberOfWorkItemsToGet
+                            int intNumberOfWorkItemsToGet,
+                            bool bHideLoaderWindows
                             )
         {
-            char[] charPassword = {'P', '@', 's', 's', 'w', '0', 'r', 'd'};
+            char[] charPassword = strPassword.ToCharArray();
             System.Security.SecureString ssPassword = new System.Security.SecureString();
             foreach(char c in charPassword)
             {
@@ -229,7 +270,7 @@ namespace Microsoft.SystemCenter.Test.LoadGen
             }
 
             ProcessStartInfo psiWorkerProcess = new ProcessStartInfo();
-            psiWorkerProcess.FileName = "C:\\PerfTestHarness\\LoadGen\\LoadGen\\LoadGen\\bin\\Debug\\Loader.exe";
+            psiWorkerProcess.FileName = AppDomain.CurrentDomain.BaseDirectory + "Loader.exe";
             psiWorkerProcess.Arguments = strServerName + " "
                                         + strWorkItemClassToCreate + " "
                                         + intIncidnetsPerDay.ToString() + " "
@@ -248,10 +289,10 @@ namespace Microsoft.SystemCenter.Test.LoadGen
                                         + intNumberOfWorkItemsToGet;
 
             psiWorkerProcess.Domain = strDomain;
-            psiWorkerProcess.CreateNoWindow = true;
+            psiWorkerProcess.CreateNoWindow = bHideLoaderWindows;
             psiWorkerProcess.Password = ssPassword;
             psiWorkerProcess.UseShellExecute = false;
-            psiWorkerProcess.WorkingDirectory = "C:\\PerfTestHarness\\LoadGen\\LoadGen\\LoadGen\\bin\\Debug";
+            psiWorkerProcess.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
             psiWorkerProcess.UserName = strUserName;
             Process proc = new Process();
             proc.StartInfo = psiWorkerProcess;

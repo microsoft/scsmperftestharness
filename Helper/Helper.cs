@@ -370,13 +370,20 @@ namespace Microsoft.EnterpriseManagement.Helper
 
         public static IObjectProjectionReader<EnterpriseManagementObject> GetBufferedObjectProjectionReader(string strCriteria, int intNumberOfItemsToGet, ManagementPackTypeProjection mptp, EnterpriseManagementGroup emg)
         {
-            ObjectProjectionCriteria opc = new ObjectProjectionCriteria(strCriteria, mptp, emg);
-            ObjectQueryOptions oqo = new ObjectQueryOptions();
-            oqo.ObjectRetrievalMode = ObjectRetrievalOptions.Buffered;
-            oqo.MaxResultCount = intNumberOfItemsToGet;
-            oqo.DefaultPropertyRetrievalBehavior = ObjectPropertyRetrievalBehavior.All;
-            IObjectProjectionReader<EnterpriseManagementObject> reader = emg.EntityObjects.GetObjectProjectionReader<EnterpriseManagementObject>(opc, oqo);
-            return reader;
+            if (intNumberOfItemsToGet > 0)
+            {
+                ObjectProjectionCriteria opc = new ObjectProjectionCriteria(strCriteria, mptp, emg);
+                ObjectQueryOptions oqo = new ObjectQueryOptions();
+                oqo.ObjectRetrievalMode = ObjectRetrievalOptions.Buffered;
+                oqo.MaxResultCount = intNumberOfItemsToGet;
+                oqo.DefaultPropertyRetrievalBehavior = ObjectPropertyRetrievalBehavior.All;
+                IObjectProjectionReader<EnterpriseManagementObject> reader = emg.EntityObjects.GetObjectProjectionReader<EnterpriseManagementObject>(opc, oqo);
+                return reader;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public static string SearchWorkItemByIDCriteriaXml(string strWorkItemID, string strMPName, string strMPVersion, string strMPPublicKeyToken, string strClassName)

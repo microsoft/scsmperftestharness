@@ -17,5 +17,12 @@ namespace Microsoft.SystemCenter.Test.Loader
         public const string CLASS_PROBLEM_EXTENSION = "ProblemExtension";
         public const string CLASS_SERVICEREQUEST_EXTENSION = "ServiceRequestExtension";
 
+        public const string WORKTYPE_INCIDENT = "Incident";
+        public const string WORKTYPE_SERVICEREQUEST = "ServiceRequest";
+        public const string WORKTYPE_PROBLEM = "Problem";
+        public const string WORKTYPE_RELEASE = "Release";
+        public const string WORKTYPE_CHANGEREQUEST = "ChangeRequest";
+
+
     }
 }

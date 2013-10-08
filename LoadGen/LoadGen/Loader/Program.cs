@@ -15,6 +15,7 @@ namespace Microsoft.SystemCenter.Test.Loader
 {
     class Program
     {
+        #region Privates
         public static EnterpriseManagementGroup emg;
         private static ManagementPackObjectTemplate templateIncident;
         private static ManagementPackObjectTemplate templateChangeRequest;
@@ -31,7 +32,6 @@ namespace Microsoft.SystemCenter.Test.Loader
         private static ManagementPackClass mpcChangeRequestExtension;
         private static ManagementPackClass mpcServiceRequestExtension;
         private static ManagementPackClass mpcProblemExtension;
-        private static ManagementPackEnumeration mpeGroup;
         private static ManagementPackTypeProjection mptpIncidentView;
         private static ManagementPackTypeProjection mptpIncidentFull;
         private static ManagementPackTypeProjection mptpChangeRequestView;
@@ -55,7 +55,7 @@ namespace Microsoft.SystemCenter.Test.Loader
         private static ManagementPackProperty mppChangeRequestArea;
         private static ManagementPackProperty mppProblemClassification;
         private static string strUserName = null;
-        private static string strGroupName = null;
+        private static string strUserDomainName = null;
         private static double dRate = 0;
         private static double dRateInSeconds = 0;
         private static int intRateOfWorkItemQueryAndUpdates = 0;
@@ -78,6 +78,7 @@ namespace Microsoft.SystemCenter.Test.Loader
         private static IList<ManagementPackEnumeration> listCRAreaEnums;
         private static IList<ManagementPackEnumeration> listProblemClassificationEnums;
         private static IList<ManagementPackEnumeration> listIncidentClassificationEnums;
+        #endregion
 
         static void Main(string[] args)
         {
@@ -103,21 +104,24 @@ namespace Microsoft.SystemCenter.Test.Loader
             DateTime dtCreatingManagementGroupEnd = DateTime.Now;
             TimeSpan tsCreatingManagementGroup = dtCreatingManagementGroupEnd - dtCreatingManagementGroupStart;
             pcManagementGroupCreate.RawValue = (long)tsCreatingManagementGroup.TotalSeconds;
+            Console.WriteLine(String.Format("Process user: {0}\\{1}", Environment.UserDomainName, Environment.UserName));
             Console.WriteLine("Creating Management Group (seconds): " + tsCreatingManagementGroup.TotalSeconds);
 
-            Console.WriteLine("Sleeping for 10 seconds");
             //For debugging so you can catch the process and put it in the debugger
-            Thread.Sleep(10000);
+            //Console.WriteLine("Sleeping for 10 seconds");
+            //Thread.Sleep(10000);
 
             DateTime dtCachingStart = DateTime.Now;
             //Get the current user and the user's associated group enum
             strUserName = Environment.UserName;
-            strGroupName = strUserName.Substring(0, strUserName.IndexOf("User"));
+            strUserDomainName = Environment.UserDomainName;
             mpcUser = Helper.GetClassByName("System.Domain.User", emg);
-            EnterpriseManagementObjectCriteria emocUser = new EnterpriseManagementObjectCriteria(String.Format("UserName = '{0}'", strUserName), mpcUser);
+            EnterpriseManagementObjectCriteria emocUser = new EnterpriseManagementObjectCriteria(String.Format("UserName = '{0}' AND Domain ='{1}'", strUserName, strUserDomainName), mpcUser);
             IObjectReader<EnterpriseManagementObject> orUser = emg.EntityObjects.GetObjectReader<EnterpriseManagementObject>(emocUser, ObjectQueryOptions.Default);
-            emoUser = orUser.First<EnterpriseManagementObject>();
-            mpeGroup = Helper.GetEnumerationByName(String.Format("{0}_Enum", strGroupName), emg);
+            if(orUser.Count > 0)
+                emoUser = orUser.First<EnterpriseManagementObject>();
+            else
+                Console.WriteLine(String.Format("Logged in user: {0}\\{1} doesnt exist in the SCSM database.",strUserDomainName, strUserName));
 
             //Classes
             mpcIncident = Helper.GetClassByName("System.WorkItem.Incident", emg);
@@ -203,6 +207,7 @@ namespace Microsoft.SystemCenter.Test.Loader
             while (Console.Read() != 'q') ;
         }
 
+        #region CreateWorkItems
         private static void CreateIncidents(int intNumberOfIncidentsToCreate, int intNumberPerDayRate, int intNumberOfWorkingHoursPerDay)
         {
             templateIncident = Helper.GetObjectTemplateByName(Constants.TEMPLATE_INCIDENT, emg);
@@ -214,8 +219,7 @@ namespace Microsoft.SystemCenter.Test.Loader
                 timer.Enabled = true;
             }
         }
-
-        #region CreateWorkItems
+        
         private static void CreateChangeRequests(int intNumberOfChangeRequestsToCreate, int intNumberPerDayRate, int intNumberOfWorkingHoursPerDay)
         {
             templateChangeRequest = Helper.GetObjectTemplateByName(Constants.TEMPLATE_CHANGEREQUEST, emg);
@@ -291,9 +295,268 @@ namespace Microsoft.SystemCenter.Test.Loader
         }
         #endregion
 
+        #region DoWork
+
+        private static void DoSomeIncidentWork()
+        {
+            DateTime dtIncidentWorkStart = DateTime.Now;
+
+            //Query and get some incidents using just the view type projection
+            int intRandomClassificationEnum = Helper.GetRandomNumber(0, listIncidentClassificationEnums.Count);
+            ManagementPackEnumeration mpeRandomClassification = listIncidentClassificationEnums.ElementAtOrDefault<ManagementPackEnumeration>(intRandomClassificationEnum);
+            string strClassificationCriteriaXml = Helper.SearchObjectByEnumerationCriteriaXml(mpeRandomClassification, mpcIncident, mppIncidentClassification);
+
+            DateTime dtIncidentQueryStart = DateTime.Now;
+            IObjectProjectionReader<EnterpriseManagementObject> readerIncidentView = Helper.GetBufferedObjectProjectionReader(strClassificationCriteriaXml, intNumberOfWorkItemsToGet, mptpIncidentView, emg);
+            DateTime dtIncidentQueryFinish = DateTime.Now;
+            TimeSpan tsIncidentQueryTime = dtIncidentQueryFinish - dtIncidentQueryStart;
+            pcIncidentQuery.RawValue = (long)tsIncidentQueryTime.TotalSeconds;
+            if (readerIncidentView == null)
+            {
+                Console.WriteLine("No objects to retrieve given the criteria");
+            }
+            else
+            {
+                Console.WriteLine(String.Format("{0} {1} in {2} seconds.", readerIncidentView.Count.ToString(), mpeRandomClassification.DisplayName, tsIncidentQueryTime.TotalSeconds));
+                //Get a particular incident (full projection) and update it by adding an action log entry and 
+                string strIncidentId = null;
+                if (readerIncidentView.Count > 0)
+                {
+                    strIncidentId = readerIncidentView.ElementAtOrDefault<EnterpriseManagementObjectProjection>(Helper.GetRandomNumber(0, readerIncidentView.Count -1)).Object[mpcIncident, "Id"].Value.ToString();
+                }
+
+                if (strIncidentId != null)
+                {
+                    DateTime dtGetIncidentStart = DateTime.Now;
+                    //Get the incident to update
+                    string strCriteriaXml = Helper.SearchWorkItemByIDCriteriaXml(strIncidentId, mpSystemWorkItemLibrary.Name, mpSystemWorkItemLibrary.Version.ToString(), mpSystemWorkItemLibrary.KeyToken, "System.WorkItem");
+                    ObjectProjectionCriteria opcIncidentFull = new ObjectProjectionCriteria(strCriteriaXml, mptpIncidentFull, emg);
+                    IObjectProjectionReader<EnterpriseManagementObject> oprIncidentFull = emg.EntityObjects.GetObjectProjectionReader<EnterpriseManagementObject>(opcIncidentFull, ObjectQueryOptions.Default);
+                    EnterpriseManagementObjectProjection emopIncidentFull = oprIncidentFull.First<EnterpriseManagementObjectProjection>();
+                    DateTime dtGetIncidentEnd = DateTime.Now;
+                    TimeSpan tsGetIncident = dtGetIncidentEnd - dtGetIncidentStart;
+                    pcGetSingleIncident.RawValue = (long)tsGetIncident.TotalSeconds;
+                    Console.WriteLine("Get single incident time: " + tsGetIncident.TotalSeconds);
+
+                    if (bSimulateHumanWaitTime)
+                        Thread.Sleep(intDoWorkPause);
+
+                    //Update a couple of properties on the incident
+                    emopIncidentFull.Object[mpcIncident, "Description"].Value = Guid.NewGuid().ToString();
+                    int intRandomEnumID = Helper.GetRandomNumber(0, listIncidentClassificationEnums.Count);
+                    ManagementPackEnumeration mpeClassification = listIncidentClassificationEnums.ElementAtOrDefault<ManagementPackEnumeration>(intRandomEnumID);
+                    emopIncidentFull.Object[mpcIncident, "Classification"].Value = mpeClassification;
+
+                    //Create a new action log entry and add it to the incident
+
+                    CreatableEnterpriseManagementObject cemoAnalystComment = new CreatableEnterpriseManagementObject(emg, mpcAnalystComment);
+                    cemoAnalystComment[mpcAnalystComment, "Id"].Value = System.Guid.NewGuid().ToString();
+                    cemoAnalystComment[mpcAnalystComment, "Comment"].Value = System.Guid.NewGuid().ToString();
+                    cemoAnalystComment[mpcAnalystComment, "EnteredBy"].Value = strUserName;
+                    cemoAnalystComment[mpcAnalystComment, "EnteredDate"].Value = DateTime.UtcNow;
+
+                    //If it is getting to be more than about 8 comments it is getting unrealistic.  Don't keep adding to it.
+                    if (emopIncidentFull[mprAnalystComment.Target].Count < 8)
+                        emopIncidentFull.Add(cemoAnalystComment, mprAnalystComment.Target);
+
+                    //Change the assigned to user to the current user
+                    foreach (IComposableProjection icpAssignedToUser in emopIncidentFull[mprWorkItemAssignedToUser.Target])
+                    {
+                        icpAssignedToUser.Remove();
+                    }
+                    emopIncidentFull.Add(emoUser, mprWorkItemAssignedToUser.Target);
+
+                    if (bSimulateHumanWaitTime)
+                        Thread.Sleep(intDoWorkPause);
+
+                    //Commit the changes to the DB
+                    DateTime dtUpdateIncidentStart = DateTime.Now;
+                    emopIncidentFull.Overwrite();
+                    DateTime dtUpdateIncidentEnd = DateTime.Now;
+                    TimeSpan tsUpdateIncident = dtUpdateIncidentEnd - dtUpdateIncidentStart;
+                    pcUpdateIncident.RawValue = (long)tsUpdateIncident.TotalSeconds;
+
+                    DateTime dtIncidentWorkEnd = DateTime.Now;
+                    TimeSpan tsIncidentWork = dtIncidentWorkEnd - dtIncidentWorkStart;
+                    pcIncidentWork.RawValue = (long)tsIncidentWork.TotalSeconds;
+                    Console.WriteLine("Incident work completed (seconds): " + tsIncidentWork.TotalSeconds);
+                }
+            }
+        }
+
+        private static void DoSomeChangeRequestWork()
+        {
+            DateTime dtChangeRequestWorkStart = DateTime.Now;
+
+            //Query and get some change requests using just the view type projection
+            int intRandomAreaEnum= Helper.GetRandomNumber(0, listCRAreaEnums.Count);
+            ManagementPackEnumeration mpeRandomArea = listCRAreaEnums.ElementAtOrDefault<ManagementPackEnumeration>(intRandomAreaEnum);
+            string strCriteria = Helper.SearchObjectByEnumerationCriteriaXml(mpeRandomArea, mpcChangeRequest, mppChangeRequestArea);
+
+            IObjectProjectionReader<EnterpriseManagementObject> oprChangeRequestView = Helper.GetBufferedObjectProjectionReader(strCriteria, intNumberOfWorkItemsToGet, mptpChangeRequestView, emg);
+
+            if (oprChangeRequestView == null)
+            {
+                Console.WriteLine("No objects to retrieve given the criteria");
+            }
+            else
+            {
+                //Get a particular incident (full projection) and update it by adding an action log entry and 
+                string strChangeRequestId = null;
+                if (oprChangeRequestView.Count > 0)
+                {
+                    strChangeRequestId = oprChangeRequestView.ElementAtOrDefault<EnterpriseManagementObjectProjection>(Helper.GetRandomNumber(0, oprChangeRequestView.Count -1)).Object[mpcChangeRequest, "Id"].Value.ToString();
+                }
+
+                if (strChangeRequestId != null)
+                {
+                    //Get the change request to update
+                    string strCriteriaXml = Helper.SearchWorkItemByIDCriteriaXml(strChangeRequestId, mpSystemWorkItemLibrary.Name, mpSystemWorkItemLibrary.Version.ToString(), mpSystemWorkItemLibrary.KeyToken, "System.WorkItem");
+                    ObjectProjectionCriteria opcChangeRequestFull = new ObjectProjectionCriteria(strCriteriaXml, mptpChangeRequestFull, emg);
+                    IObjectProjectionReader<EnterpriseManagementObject> oprChangeRequestFull = emg.EntityObjects.GetObjectProjectionReader<EnterpriseManagementObject>(opcChangeRequestFull, ObjectQueryOptions.Default);
+                    EnterpriseManagementObjectProjection emopChangeRequestFull = oprChangeRequestFull.First<EnterpriseManagementObjectProjection>();
+
+                    if (bSimulateHumanWaitTime)
+                        Thread.Sleep(intDoWorkPause);
+
+                    //Update a couple of properties on the change request
+                    emopChangeRequestFull.Object[mpcChangeRequest, "Description"].Value = Guid.NewGuid().ToString();
+                    int intRandomEnumID = Helper.GetRandomNumber(0, listCRAreaEnums.Count);
+                    ManagementPackEnumeration mpeArea = listCRAreaEnums.ElementAtOrDefault<ManagementPackEnumeration>(intRandomEnumID);
+                    emopChangeRequestFull.Object[mpcChangeRequestExtension, "Area"].Value = mpeArea;
+
+
+                    //Add the current user as an affected CI
+                    emopChangeRequestFull.Add(emoUser, mprAffectedCI.Target);
+
+                    if (bSimulateHumanWaitTime)
+                        Thread.Sleep(intDoWorkPause);
+
+                    //Commit the changes to the DB
+                    emopChangeRequestFull.Overwrite();
+
+                    foreach (IComposableProjection icpRelatedCI in emopChangeRequestFull[mprRelatedCI.Target])
+                    {
+                        icpRelatedCI.Remove();
+                    }
+
+                    emopChangeRequestFull.Overwrite();
+
+                    DateTime dtChangeRequestWorkEnd = DateTime.Now;
+                    TimeSpan tsChangeRequestWork = dtChangeRequestWorkEnd - dtChangeRequestWorkStart;
+                    pcChangeRequestWork.RawValue = (long)tsChangeRequestWork.TotalSeconds;
+                    Console.WriteLine("Change request work completed (seconds): " + tsChangeRequestWork.TotalSeconds);
+                }
+            }
+        }
+
+        private static void DoSomeServiceRequestWork()
+        {
+            DateTime dtServiceRequestWorkStart = DateTime.Now;
+
+            int intRandomAreaEnum = Helper.GetRandomNumber(0, listSRAreaEnums.Count);
+            ManagementPackEnumeration mpeRadomArea = listSRAreaEnums.ElementAtOrDefault<ManagementPackEnumeration>(intRandomAreaEnum);
+            string strCriteria = Helper.SearchObjectByEnumerationCriteriaXml(mpeRadomArea, mpcServiceRequest, mppServiceRequestArea);
+            IObjectProjectionReader<EnterpriseManagementObject> oprServiceRequestsView = Helper.GetBufferedObjectProjectionReader(strCriteria, intNumberOfWorkItemsToGet, mptpServiceRequestView, emg);
+
+            if (oprServiceRequestsView == null)
+            {
+                Console.WriteLine("No objects to retrieve given the criteria");
+            }
+            else
+            {
+                //Get a particular service request (full projection) and update it by adding an action log entry and 
+                string strServiceRequestId = null;
+                if (oprServiceRequestsView.Count > 0)
+                {
+                    strServiceRequestId = oprServiceRequestsView.ElementAtOrDefault<EnterpriseManagementObjectProjection>(Helper.GetRandomNumber(0, oprServiceRequestsView.Count - 1)).Object[mpcServiceRequest, "Id"].Value.ToString();
+                }
+
+                if (strServiceRequestId != null)
+                {
+                    string strCriteriaXml = Helper.SearchWorkItemByIDCriteriaXml(strServiceRequestId, mpSystemWorkItemLibrary.Name, mpSystemWorkItemLibrary.Version.ToString(), mpSystemWorkItemLibrary.KeyToken, "System.WorkItem");
+                    ObjectProjectionCriteria opServiceRequestFull = new ObjectProjectionCriteria(strCriteriaXml, mptpServiceRequestFull, emg);
+                    IObjectProjectionReader<EnterpriseManagementObject> oprServiceRequestFull = emg.EntityObjects.GetObjectProjectionReader<EnterpriseManagementObject>(opServiceRequestFull, ObjectQueryOptions.Default);
+                    EnterpriseManagementObjectProjection emopServiceRequestFull = oprServiceRequestFull.First<EnterpriseManagementObjectProjection>();
+
+                    if (bSimulateHumanWaitTime)
+                        Thread.Sleep(intDoWorkPause);
+
+                    emopServiceRequestFull.Object[mpcServiceRequest, "Description"].Value = Guid.NewGuid().ToString();
+                    int intRandomEnumId = Helper.GetRandomNumber(0, listSRAreaEnums.Count);
+                    ManagementPackEnumeration mpeArea = listSRAreaEnums.ElementAtOrDefault<ManagementPackEnumeration>(intRandomEnumId);
+                    emopServiceRequestFull.Object[mpcServiceRequestExtension, "Area"].Value = mpeArea;
+
+                    emopServiceRequestFull.Overwrite();
+
+                    DateTime dtServiceRequestWorkEnd = DateTime.Now;
+                    TimeSpan tsServiceRequestWork = dtServiceRequestWorkEnd - dtServiceRequestWorkStart;
+                    pcServiceRequestWork.RawValue = (long)tsServiceRequestWork.TotalSeconds;
+                    Console.WriteLine("Service request work completed (seconds): " + tsServiceRequestWork.TotalSeconds);
+                }
+            }
+        }
+
+        private static void DoSomeProblemWork()
+        {
+            DateTime dtProblemWorkStart = DateTime.Now;
+
+            int intRadomClassification = Helper.GetRandomNumber(0, listProblemClassificationEnums.Count);
+            ManagementPackEnumeration mpeRandomClassification = listProblemClassificationEnums.ElementAtOrDefault<ManagementPackEnumeration>(intRadomClassification);
+            string strClassificationCriteriaXml = Helper.SearchObjectByEnumerationCriteriaXml(mpeRandomClassification, mpcProblem, mppProblemClassification);
+            IObjectProjectionReader<EnterpriseManagementObject> oprProblemView = Helper.GetBufferedObjectProjectionReader(strClassificationCriteriaXml, intNumberOfWorkItemsToGet, mptpProblemView, emg);
+
+            if(oprProblemView == null)
+            {
+                Console.WriteLine("No objects to retrieve given the criteria");
+            }
+            else
+            {
+                //Get a particular problem (full projection) and update it by adding an action log entry and 
+                string strProblemId = null;
+                if (oprProblemView.Count > 0)
+                {
+                    strProblemId = oprProblemView.ElementAtOrDefault<EnterpriseManagementObjectProjection>(Helper.GetRandomNumber(0, oprProblemView.Count - 1)).Object[mpcProblem, "Id"].Value.ToString();
+                }
+
+                if (strProblemId != null)
+                {
+                    string strCriteriaXml = Helper.SearchWorkItemByIDCriteriaXml(strProblemId, mpSystemWorkItemLibrary.Name, mpSystemWorkItemLibrary.Version.ToString(), mpSystemWorkItemLibrary.KeyToken, "System.WorkItem");
+                    ObjectProjectionCriteria opcProblemFull = new ObjectProjectionCriteria(strCriteriaXml, mptpProblemFull, emg);
+                    IObjectProjectionReader<EnterpriseManagementObject> oprProblemFull = emg.EntityObjects.GetObjectProjectionReader<EnterpriseManagementObject>(opcProblemFull, ObjectQueryOptions.Default);
+                    EnterpriseManagementObjectProjection emopProblemFull = oprProblemFull.First<EnterpriseManagementObjectProjection>();
+
+                    emopProblemFull.Object[mpcProblem, "Description"].Value = Guid.NewGuid().ToString();
+                    int intRandomEnumID = Helper.GetRandomNumber(0, listProblemClassificationEnums.Count);
+                    ManagementPackEnumeration mpeClassification = listProblemClassificationEnums.ElementAtOrDefault<ManagementPackEnumeration>(intRandomEnumID);
+                    emopProblemFull.Object[mpcProblemExtension, "Classification"].Value = mpeClassification;
+
+                    //EnterpriseManagementObjectCriteria emocComputer = new EnterpriseManagementObjectCriteria();
+                    ObjectQueryOptions oqoComputer = new ObjectQueryOptions();
+                    oqoComputer.MaxResultCount = 5;
+                    oqoComputer.DefaultPropertyRetrievalBehavior = ObjectPropertyRetrievalBehavior.All;
+                    oqoComputer.ObjectRetrievalMode = ObjectRetrievalOptions.Buffered;
+                    IObjectReader<EnterpriseManagementObject> orComputers = emg.EntityObjects.GetObjectReader<EnterpriseManagementObject>(mpcComputer, oqoComputer);
+
+                    if (bSimulateHumanWaitTime)
+                        Thread.Sleep(intDoWorkPause);
+
+                    emopProblemFull.Overwrite();
+
+                    DateTime dtProblemWorkEnd = DateTime.Now;
+                    TimeSpan tsProblemWork = dtProblemWorkEnd - dtProblemWorkStart;
+                    pcProblemWork.RawValue = (long)tsProblemWork.TotalSeconds;
+                    Console.WriteLine("Problem work completed (seconds): " + tsProblemWork.TotalSeconds);
+                }
+            }
+        }
+
+        #endregion
+
         private static void WorkItemQueryUpdate(object source, ElapsedEventArgs e)
         {
-            try{
+            try
+            {
                 DateTime dtDoWorkStart = DateTime.Now;
 
                 //Total time to complete is intDoWorkPause * 14
@@ -302,9 +565,9 @@ namespace Microsoft.SystemCenter.Test.Loader
 
                 Console.WriteLine("Doing Incident Work");
                 DoSomeIncidentWork();
-            
+
                 //Wait for a bit before you do something else
-                if(bSimulateHumanWaitTime)
+                if (bSimulateHumanWaitTime)
                     Thread.Sleep(intDoWorkPause);
 
                 Console.WriteLine("Doing Change Request Work");
@@ -335,7 +598,7 @@ namespace Microsoft.SystemCenter.Test.Loader
                 TimeSpan tsDoWork = dtDoWorkEnd - dtDoWorkStart;
                 pcDoWork.RawValue = (long)tsDoWork.TotalSeconds;
                 Console.WriteLine("Do work completed (seconds): " + tsDoWork.TotalSeconds);
-                Console.WriteLine("Do work interval (seconds): " + intRateOfWorkItemQueryAndUpdates/1000);
+                Console.WriteLine("Do work interval (seconds): " + intRateOfWorkItemQueryAndUpdates / 1000);
 
             }
             catch (Exception ex)
@@ -369,266 +632,6 @@ namespace Microsoft.SystemCenter.Test.Loader
             {
                 Console.WriteLine(e.Message);
                 Console.WriteLine(e.InnerException.Message);
-            }
-        }
-
-        private static void DoSomeIncidentWork()
-        {
-            DateTime dtIncidentWorkStart = DateTime.Now;
-
-            //Query and get some incidents using just the view type projection
-            int intRandomClassificationEnum = Helper.GetRandomNumber(0, listIncidentClassificationEnums.Count);
-            ManagementPackEnumeration mpeRandomClassification = listIncidentClassificationEnums.ElementAtOrDefault<ManagementPackEnumeration>(intRandomClassificationEnum);
-            string strClassificationCriteriaXml = Helper.SearchObjectByEnumerationCriteriaXml(mpeRandomClassification, mpcIncident, mppIncidentClassification);
-
-            DateTime dtIncidentQueryStart = DateTime.Now;
-            IObjectProjectionReader<EnterpriseManagementObject> readerIncidentView = Helper.GetBufferedObjectProjectionReader(strClassificationCriteriaXml, intNumberOfWorkItemsToGet, mptpIncidentView, emg);
-            DateTime dtIncidentQueryFinish = DateTime.Now;
-            TimeSpan tsIncidentQueryTime = dtIncidentQueryFinish - dtIncidentQueryStart;
-            pcIncidentQuery.RawValue = (long)tsIncidentQueryTime.TotalSeconds;
-            Console.WriteLine(String.Format("{0} {1} in {2} seconds.", readerIncidentView.Count.ToString(), mpeRandomClassification.DisplayName, tsIncidentQueryTime.TotalSeconds));
-            //Get a particular incident (full projection) and update it by adding an action log entry and 
-            string strIncidentId = null;
-            if (readerIncidentView.Count > 0)
-            {
-                strIncidentId = readerIncidentView.ElementAtOrDefault<EnterpriseManagementObjectProjection>(Helper.GetRandomNumber(0, readerIncidentView.Count -1)).Object[mpcIncident, "Id"].Value.ToString();
-            }
-
-            if (strIncidentId != null)
-            {
-                DateTime dtGetIncidentStart = DateTime.Now;
-                //Get the incident to update
-                string strCriteriaXml = Helper.SearchWorkItemByIDCriteriaXml(strIncidentId, mpSystemWorkItemLibrary.Name, mpSystemWorkItemLibrary.Version.ToString(), mpSystemWorkItemLibrary.KeyToken, "System.WorkItem");
-                ObjectProjectionCriteria opcIncidentFull = new ObjectProjectionCriteria(strCriteriaXml, mptpIncidentFull, emg);
-                IObjectProjectionReader<EnterpriseManagementObject> oprIncidentFull = emg.EntityObjects.GetObjectProjectionReader<EnterpriseManagementObject>(opcIncidentFull, ObjectQueryOptions.Default);
-                EnterpriseManagementObjectProjection emopIncidentFull = oprIncidentFull.First<EnterpriseManagementObjectProjection>();
-                DateTime dtGetIncidentEnd = DateTime.Now;
-                TimeSpan tsGetIncident = dtGetIncidentEnd - dtGetIncidentStart;
-                pcGetSingleIncident.RawValue = (long)tsGetIncident.TotalSeconds;
-                Console.WriteLine("Get single incident time: " + tsGetIncident.TotalSeconds);
-
-                if (bSimulateHumanWaitTime)
-                    Thread.Sleep(intDoWorkPause);
-
-                //Update a couple of properties on the incident
-                emopIncidentFull.Object[mpcIncident, "Description"].Value = Guid.NewGuid().ToString();
-                int intRandomEnumID = Helper.GetRandomNumber(0, listIncidentClassificationEnums.Count);
-                ManagementPackEnumeration mpeClassification = listIncidentClassificationEnums.ElementAtOrDefault<ManagementPackEnumeration>(intRandomEnumID);
-                emopIncidentFull.Object[mpcIncident, "Classification"].Value = mpeClassification;
-
-                //Create a new action log entry and add it to the incident
-                
-                CreatableEnterpriseManagementObject cemoAnalystComment = new CreatableEnterpriseManagementObject(emg, mpcAnalystComment);
-                cemoAnalystComment[mpcAnalystComment, "Id"].Value = System.Guid.NewGuid().ToString();
-                cemoAnalystComment[mpcAnalystComment, "Comment"].Value = System.Guid.NewGuid().ToString();
-                cemoAnalystComment[mpcAnalystComment, "EnteredBy"].Value = strUserName;
-                cemoAnalystComment[mpcAnalystComment, "EnteredDate"].Value = DateTime.UtcNow;
-
-                //If it is getting to be more than about 8 comments it is getting unrealistic.  Don't keep adding to it.
-                if (emopIncidentFull[mprAnalystComment.Target].Count < 8)
-                    emopIncidentFull.Add(cemoAnalystComment, mprAnalystComment.Target);
-
-                //Change the assigned to user to the current user
-                foreach (IComposableProjection icpAssignedToUser in emopIncidentFull[mprWorkItemAssignedToUser.Target])
-                {
-                    icpAssignedToUser.Remove();
-                }
-                emopIncidentFull.Add(emoUser, mprWorkItemAssignedToUser.Target);
-
-                if (bSimulateHumanWaitTime)
-                    Thread.Sleep(intDoWorkPause);
-                
-                //Commit the changes to the DB
-                DateTime dtUpdateIncidentStart = DateTime.Now;
-                emopIncidentFull.Overwrite();
-                DateTime dtUpdateIncidentEnd = DateTime.Now;
-                TimeSpan tsUpdateIncident = dtUpdateIncidentEnd - dtUpdateIncidentStart;
-                pcUpdateIncident.RawValue = (long)tsUpdateIncident.TotalSeconds;
-
-                DateTime dtIncidentWorkEnd = DateTime.Now;
-                TimeSpan tsIncidentWork = dtIncidentWorkEnd - dtIncidentWorkStart;
-                pcIncidentWork.RawValue = (long)tsIncidentWork.TotalSeconds;
-                Console.WriteLine("Incident work completed (seconds): " + tsIncidentWork.TotalSeconds);
-            }
-        }
-
-        private static void DoSomeChangeRequestWork()
-        {
-            DateTime dtChangeRequestWorkStart = DateTime.Now;
-
-            //Query and get some change requests using just the view type projection
-            int intRandomAreaEnum= Helper.GetRandomNumber(0, listCRAreaEnums.Count);
-            ManagementPackEnumeration mpeRandomArea = listCRAreaEnums.ElementAtOrDefault<ManagementPackEnumeration>(intRandomAreaEnum);
-            string strCriteria = Helper.SearchObjectByEnumerationCriteriaXml(mpeRandomArea, mpcChangeRequest, mppChangeRequestArea);
-
-            IObjectProjectionReader<EnterpriseManagementObject> oprChangeRequestView = Helper.GetBufferedObjectProjectionReader(strCriteria, intNumberOfWorkItemsToGet, mptpChangeRequestView, emg);
-
-            //Get a particular incident (full projection) and update it by adding an action log entry and 
-            string strChangeRequestId = null;
-            if (oprChangeRequestView.Count > 0)
-            {
-                strChangeRequestId = oprChangeRequestView.ElementAtOrDefault<EnterpriseManagementObjectProjection>(Helper.GetRandomNumber(0, oprChangeRequestView.Count -1)).Object[mpcChangeRequest, "Id"].Value.ToString();
-            }
-
-            if (strChangeRequestId != null)
-            {
-                //Get the change request to update
-                string strCriteriaXml = Helper.SearchWorkItemByIDCriteriaXml(strChangeRequestId, mpSystemWorkItemLibrary.Name, mpSystemWorkItemLibrary.Version.ToString(), mpSystemWorkItemLibrary.KeyToken, "System.WorkItem");
-                ObjectProjectionCriteria opcChangeRequestFull = new ObjectProjectionCriteria(strCriteriaXml, mptpChangeRequestFull, emg);
-                IObjectProjectionReader<EnterpriseManagementObject> oprChangeRequestFull = emg.EntityObjects.GetObjectProjectionReader<EnterpriseManagementObject>(opcChangeRequestFull, ObjectQueryOptions.Default);
-                EnterpriseManagementObjectProjection emopChangeRequestFull = oprChangeRequestFull.First<EnterpriseManagementObjectProjection>();
-
-                if (bSimulateHumanWaitTime)
-                    Thread.Sleep(intDoWorkPause);
-
-                //Update a couple of properties on the change request
-                emopChangeRequestFull.Object[mpcChangeRequest, "Description"].Value = Guid.NewGuid().ToString();
-                int intRandomEnumID = Helper.GetRandomNumber(0, listCRAreaEnums.Count);
-                ManagementPackEnumeration mpeArea = listCRAreaEnums.ElementAtOrDefault<ManagementPackEnumeration>(intRandomEnumID);
-                emopChangeRequestFull.Object[mpcChangeRequestExtension, "Area"].Value = mpeArea;
-
-
-                //Add the current user as an affected CI
-                emopChangeRequestFull.Add(emoUser, mprAffectedCI.Target);
-
-                if (bSimulateHumanWaitTime)
-                    Thread.Sleep(intDoWorkPause);
-
-                //Commit the changes to the DB
-                emopChangeRequestFull.Overwrite();
-
-                foreach (IComposableProjection icpRelatedCI in emopChangeRequestFull[mprRelatedCI.Target])
-                {
-                    icpRelatedCI.Remove();
-                }
-
-                emopChangeRequestFull.Overwrite();
-
-                DateTime dtChangeRequestWorkEnd = DateTime.Now;
-                TimeSpan tsChangeRequestWork = dtChangeRequestWorkEnd - dtChangeRequestWorkStart;
-                pcChangeRequestWork.RawValue = (long)tsChangeRequestWork.TotalSeconds;
-                Console.WriteLine("Change request work completed (seconds): " + tsChangeRequestWork.TotalSeconds);   
-            }
-        }
-
-        private static void DoSomeServiceRequestWork()
-        {
-            DateTime dtServiceRequestWorkStart = DateTime.Now;
-
-            int intRandomAreaEnum = Helper.GetRandomNumber(0, listSRAreaEnums.Count);
-            ManagementPackEnumeration mpeRadomArea = listSRAreaEnums.ElementAtOrDefault<ManagementPackEnumeration>(intRandomAreaEnum);
-            string strCriteria = Helper.SearchObjectByEnumerationCriteriaXml(mpeRadomArea, mpcServiceRequest, mppServiceRequestArea);
-            IObjectProjectionReader<EnterpriseManagementObject> oprServiceRequestsView = Helper.GetBufferedObjectProjectionReader(strCriteria, intNumberOfWorkItemsToGet, mptpServiceRequestView, emg);
-
-            //Get a particular service request (full projection) and update it by adding an action log entry and 
-            string strServiceRequestId = null;
-            if (oprServiceRequestsView.Count > 0)
-            {
-                strServiceRequestId = oprServiceRequestsView.ElementAtOrDefault<EnterpriseManagementObjectProjection>(Helper.GetRandomNumber(0, oprServiceRequestsView.Count - 1)).Object[mpcServiceRequest, "Id"].Value.ToString();
-            }
-
-            if (strServiceRequestId != null)
-            {
-                string strCriteriaXml = Helper.SearchWorkItemByIDCriteriaXml(strServiceRequestId, mpSystemWorkItemLibrary.Name, mpSystemWorkItemLibrary.Version.ToString(), mpSystemWorkItemLibrary.KeyToken, "System.WorkItem");
-                ObjectProjectionCriteria opServiceRequestFull = new ObjectProjectionCriteria(strCriteriaXml, mptpServiceRequestFull, emg);
-                IObjectProjectionReader<EnterpriseManagementObject> oprServiceRequestFull = emg.EntityObjects.GetObjectProjectionReader<EnterpriseManagementObject>(opServiceRequestFull, ObjectQueryOptions.Default);
-                EnterpriseManagementObjectProjection emopServiceRequestFull = oprServiceRequestFull.First<EnterpriseManagementObjectProjection>();
-
-                if (bSimulateHumanWaitTime)
-                    Thread.Sleep(intDoWorkPause);
-
-                emopServiceRequestFull.Object[mpcServiceRequest, "Description"].Value = Guid.NewGuid().ToString();
-                int intRandomEnumId = Helper.GetRandomNumber(0,listSRAreaEnums.Count);
-                ManagementPackEnumeration mpeArea = listSRAreaEnums.ElementAtOrDefault<ManagementPackEnumeration>(intRandomEnumId);
-                emopServiceRequestFull.Object[mpcServiceRequestExtension, "Area"].Value = mpeArea;
-
-                //Add the current user as an related CI
-                //emopServiceRequestFull.Add(emoUser, mprRelatedCI.Target);
-
-                //if (bSimulateHumanWaitTime)
-                //    Thread.Sleep(intDoWorkPause);
-
-                emopServiceRequestFull.Overwrite();
-
-                //Remove the current user as a related CI
-                /*
-                foreach (IComposableProjection icpRelatedCI in emopServiceRequestFull[mprRelatedCI.Target])
-                {
-                    icpRelatedCI.Remove();
-                }
-
-                emopServiceRequestFull.Overwrite();
-                */
-
-                DateTime dtServiceRequestWorkEnd = DateTime.Now;
-                TimeSpan tsServiceRequestWork = dtServiceRequestWorkEnd - dtServiceRequestWorkStart;
-                pcServiceRequestWork.RawValue = (long)tsServiceRequestWork.TotalSeconds;
-                Console.WriteLine("Service request work completed (seconds): " + tsServiceRequestWork.TotalSeconds);
-                
-            }
-        }
-
-        private static void DoSomeProblemWork()
-        {
-            DateTime dtProblemWorkStart = DateTime.Now;
-
-            int intRadomClassification = Helper.GetRandomNumber(0, listProblemClassificationEnums.Count);
-            ManagementPackEnumeration mpeRandomClassification = listProblemClassificationEnums.ElementAtOrDefault<ManagementPackEnumeration>(intRadomClassification);
-            string strClassificationCriteriaXml = Helper.SearchObjectByEnumerationCriteriaXml(mpeRandomClassification, mpcProblem, mppProblemClassification);
-            IObjectProjectionReader<EnterpriseManagementObject> oprProblemView = Helper.GetBufferedObjectProjectionReader(strClassificationCriteriaXml, intNumberOfWorkItemsToGet, mptpProblemView, emg);
-
-            //Get a particular problem (full projection) and update it by adding an action log entry and 
-            string strProblemId = null;
-            if (oprProblemView.Count > 0)
-            {
-                strProblemId = oprProblemView.ElementAtOrDefault<EnterpriseManagementObjectProjection>(Helper.GetRandomNumber(0, oprProblemView.Count - 1)).Object[mpcProblem, "Id"].Value.ToString();
-            }
-
-            if (strProblemId != null)
-            {
-                string strCriteriaXml = Helper.SearchWorkItemByIDCriteriaXml(strProblemId, mpSystemWorkItemLibrary.Name, mpSystemWorkItemLibrary.Version.ToString(), mpSystemWorkItemLibrary.KeyToken, "System.WorkItem");
-                ObjectProjectionCriteria opcProblemFull = new ObjectProjectionCriteria(strCriteriaXml, mptpProblemFull, emg);
-                IObjectProjectionReader<EnterpriseManagementObject> oprProblemFull = emg.EntityObjects.GetObjectProjectionReader<EnterpriseManagementObject>(opcProblemFull, ObjectQueryOptions.Default);
-                EnterpriseManagementObjectProjection emopProblemFull = oprProblemFull.First<EnterpriseManagementObjectProjection>();
-
-                emopProblemFull.Object[mpcProblem, "Description"].Value = Guid.NewGuid().ToString();
-                int intRandomEnumID = Helper.GetRandomNumber(0, listProblemClassificationEnums.Count);
-                ManagementPackEnumeration mpeClassification = listProblemClassificationEnums.ElementAtOrDefault<ManagementPackEnumeration>(intRandomEnumID);
-                emopProblemFull.Object[mpcProblemExtension, "Classification"].Value = mpeClassification;
-
-                //EnterpriseManagementObjectCriteria emocComputer = new EnterpriseManagementObjectCriteria();
-                ObjectQueryOptions oqoComputer = new ObjectQueryOptions();
-                oqoComputer.MaxResultCount = 5;
-                oqoComputer.DefaultPropertyRetrievalBehavior = ObjectPropertyRetrievalBehavior.All;
-                oqoComputer.ObjectRetrievalMode = ObjectRetrievalOptions.Buffered;
-                IObjectReader<EnterpriseManagementObject> orComputers = emg.EntityObjects.GetObjectReader<EnterpriseManagementObject>(mpcComputer,oqoComputer);
-
-                /*
-                foreach (EnterpriseManagementObject cpComputer in orComputers)
-                {
-                    emopProblemFull.Add(cpComputer, mprAffectedCI.Target);
-                }
-                */
-
-                if (bSimulateHumanWaitTime)
-                    Thread.Sleep(intDoWorkPause);
-
-                emopProblemFull.Overwrite();
-
-                //if (bSimulateHumanWaitTime)
-                //    Thread.Sleep(intDoWorkPause);
-                /*
-                foreach (IComposableProjection icpComputer in emopProblemFull[mprAffectedCI.Target])
-                {
-                    icpComputer.Remove();
-                }
-
-                emopProblemFull.Overwrite();
-                */
-                DateTime dtProblemWorkEnd = DateTime.Now;
-                TimeSpan tsProblemWork = dtProblemWorkEnd - dtProblemWorkStart;
-                pcProblemWork.RawValue = (long)tsProblemWork.TotalSeconds;
-                Console.WriteLine("Problem work completed (seconds): " + tsProblemWork.TotalSeconds);
             }
         }
 
