@@ -1,0 +1,14 @@
+<div class="wikidoc">
+<h2>Historical Testing Approach</h2>
+<p>Historically the performance/scale testing was done by the performance test team in a lab in the SMX environment.</p>
+<p>SQL Servers for the SM and DW databases and for the management servers all used the same hardware:</p>
+<ul>
+<li><span style="font-size:7pt">&nbsp;</span>8 cores </li><li>16 GB of RAM </li><li>multi-disk arrays for the SMDB and DWDBs data and log files (about 10-14 spindles)
+</li><li>data and log files were not separated onto different drive arrays </li><li>RAID configuration was not optimized for data vs. log read/write patterns </li><li>TempDB data and log files were left on the OS drive </li><li>Direct attached storage was used </li></ul>
+<p>The data representing the configuration items would be populated into the database using a tool called &lsquo;DataGen&rsquo; which would create computers, users, printers, and other CIs to a specified scale. This process would normally take several days
+ to fully populate a database with 50,000 computers.</p>
+<p>Following the initial population of the data a tool would be run to simulate load on the system from console &ldquo;users&rdquo; performing some work.</p>
+<p>The user &ldquo;experience&rdquo; of this automated system would be measured versus our performance requirements and reported on each time a perf run was completed. Completing a perf run could take 1-2 weeks.</p>
+<p>AD Connectors would be set up to to do initial data syncs.</p>
+<p>The data warehouse would be set up to evaluate ETL transaction rate.</p>
+</div><div class="ClearBoth"></div>

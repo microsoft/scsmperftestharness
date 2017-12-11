@@ -1,0 +1,18 @@
+The SCSM Perf Test Harness also includes some CSV data files and corresponding XML format files.  There are CSV data files for Computers, Hardware (Logical Disk Drives, Network Adapters, Physical Disks, and Processors), and Software.
+
+To import Computers use the ComputerData200k.csv data file and remove as many rows as you want.  If you want to create your own data file you can start from ComputerData.xlsx.  Then save the file as a .csv file **without the column headers**.  The mapping file that corresponds to the ComputerData.xlsx/ComputerData200k.csv is ComputerFormatFile.xml.  This data and format file will also add 1 each processor, logical drive, physical drive, and network adapter.
+
+If you want to just add network adapters, processors, logical disks, or physical disks to _existing_ computers you can use the following data:format files:
+* LogicalDiskData.xlsx | LogicalDiskFormatFile.xml,
+* NetworkAdapterData.xlsx | NetworkAdapterFormatFile.xml
+* PhysicalDiskData.xlsx | PhysicalDiskFormatFile.xml
+* ProcessorData.xlsx | ProcessorFormatFile.xml
+
+Reminder: you can add multiple HW items to the same computer.  You need to create a row for each hardware item and put the FQDN of the computer in the PrincipalName column.
+
+If you want to add software to _existing_ computers you can use the SoftwareData.xlsx data file and SoftwareFormatFile.xml format file.
+
+You can import data via CSV either using the SCSM console (Administration\Connectors view) or using PowerShell from the SCSM PowerShell window (start from the Administration home page and then run the command Import-SCSMInstance -DataFileName <name of the .csv data file> -FormatFileName <name of the .xml format file>).
+
+For more information on the SCSM CSV import feature see the blog post on the SCSM blog:
+[http://blogs.technet.com/b/servicemanager/archive/2009/05/26/using-the-csv-import-feature.aspx](http://blogs.technet.com/b/servicemanager/archive/2009/05/26/using-the-csv-import-feature.aspx)

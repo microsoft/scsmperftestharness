@@ -1,0 +1,151 @@
+
+*Do not download these binaries into your user profile directories.  It will prevent the loader.exe processes from launching per Windows security policy against allowing runas execution of executables in your profile directory by other users.*
+
+! First Things First - Import Management Packs
+The very first step to do when using the SCSMPerfTestHarness is to import the following management pack:
+* *Microsoft.SystemCenter.ServiceManager.PerformanceTest.xml* - this imports some templates which are used by the perf test harness to create work items.  It also imports some notification subscription templates which can be used to create some notification subscriptions for test purposes.
+
+* *DisableImplicitUserRoles.xml* - this will disable implied permissions which can have a very large impact on performance at scale.  This is not necessary for the perf test framework to execute but is advised if you are testing or running SCSM at high scale.
+
+! Specifying Users
+The perf test harness assumes that you have some users in the CMDB.  You need to indicate to the perf test harness which users to log in as when spawning the Loader.exe processes.  There are two ways to do this:
+1) Provide a username prefix to search by in the CMDB and specify the # of users to retrieve from the CMDB that match the prefix.   This is essentially doing a UserName LIKE '<search term>%' query in the Service Manager DB.  For example if you had users in the SCSM CMDB with usernames like:
+TestUser1
+TestUser2
+TestUser3
+TestUser4
+.....
+TestUser1000
+
+You could specify the prefix to be "TestUser" and the max to be 50. This would retrieve 50 users from the database which all start with 'TestUser'.  Note this does not necessarily mean TestUser1...TestUser50 because the SCSM DB will randomly return user records.  This is by design to randomize the data a bit.
+
+2) You can specify the usernames to use by putting them in a text file (one username per line) and then pointing to the file by path\name.
+
+*Notes:*
+* Regardless of which option you choose all of the users must be in the domain that is specified and must have the same password that you specify.  This enables the LoadGen application to spawn all the Loader.exe processes under the security context of each of the users.
+
+* Each of the users you specify (even if it is in a text file) MUST exist in the SCSM DB!
+
+* *Make sure you add these users to a user role in SCSM that will have sufficient permission to do what needs to be done such as the Advanced Operators, Authors, or Administrators user roles.*
+
+* You can conveniently generate users in the SCSM DB by using the Create-User.ps1 script.  Example usage:
+Create-Users.ps1 -NumberOfUsersToCreate 100 -StartNumber 1 -Domain contoso -Password SMX#2001
+
+This will create users in the contoso domain Users container (CN=Users,DC=contoso,DC=com) with the usernames  TestUser1... TestUser100 with the password SMX#2001.
+
+Note: This script should be run on a Windows Server such as the SCSM management server because it attempts to install the ActiveDirectory PowerShell module in order to call the New-ADUser cmdlet.
+
+Then you can sync these users into the SCSM DB using the Active Directory connector.
+
+! Configuring Parameters
+There are a number of other parameters which can be configured as follows:
+* *Thread start up interval (ms):* This is the amount of time (in milliseconds) to wait between launching loader.exe processes.  This allows each process to start up, get an EnterpriseManagementGroup object, cache the MP elements it needs to before starting the next loader.exe process.  Getting an EnterpriseManagementGroup object and caching the MP information is a relatively heavy weight process.  To prevent flooding the system with hundreds of simultaneous requests for this heavy weight information the processes are launched with some delay in between to allow for the start up and caching.
+* *Server name:* The SCSM management server FQDN to connect to.  All loader.exe processes spawned will create an EnterpriseManagementGroup object connected to the specified server.
+* *Number of working hours/day:* Changing this number will affect the frequency of work item creation.  Work items will be created more frequently in an 8 hour day than in a 24 hour day for the same total number of work items to be created per day.  For example if LoadGen.exe is configured to create 2400 incidents per day and the working hours is set to 8 that will result in a rate of 300 incidents per hour.  If the working hours is set to 24 that will result in a rate of 100 incidents per hour.
+* *Do work frequency: * How often to “do work” such as getting some incidents, choosing one of  them updating some properties, posting back the changes, etc.  This is described in more detail below.
+* *Do work pause:* How long to wait at certain points in the do work process. This better simulates a user’s pace of interaction with the computer than simply executing SDK calls as fast as the computer can operate.
+* *Number of work items to get:* In some of the steps in the “do work” process work items and computers are retrieved from the database.  This number simulates the number of work items that might typically appear in a work item view in the console that the user was accessing.  You can specify 0 if you don't want the loader.exe processes to retrieve and update objects.
+* *Number of <work item class> to create:* This is the max number of work items that the loader.exe processes should create before stopping.
+* *Number of <work item class> to create per day:* the total number of work items that the loader.exe processes should create per day.  This combined with the working hours per day number determines the overall work item creation rate.
+* *Percent of workers creating <work item class>:*  Percentage of the total number of loader.exe processes that should be dedicated to creating that type of work item.  For example if 100 loader.exe processes were to be created and LoadGen.exe was configured to create 70% of the loader.exe processes for incident creation then 70 loader.exe processes would be dedicated to creating incidents.
+* *Hide loader windows:* will prevent the loader.exe windows from popping up.  They will continue to run in the background.
+
+! What Happens When I Click 'Start Load'?
+When the Start Load button is clicked LoadGen.exe reads gets all the user names either from the SCSM DB or from the text file.  For each of those users, it creates a new Loader.exe process running under the user security context of that user.  Given the percentage allocations of Loader.exe processes for each work item class, each Loader.exe is assigned a work item class to create and update objects of.
+Each Loader.exe process then does two things:
+# Create a work item using a pre-defined template (see MP above) at an interval which will allow it to contribute to the overall work item creation rate across all Loader.exe processes which are creating work items of that class.  For example if 800 incidents need to be created per day in a 8 hour period and there are 20 Loader.exe processes assigned to create incidents, each Loader.exe will create 800 / 8 / 20 = 5 incidents per hour.
+# Run through a “do work” cycle repeatedly in the interval configured in the LoadGen.exe GUI.
+The “do work” cycle consists of the following actions:
+* Do Incident Work
+* Pause for interval configured in LoadGen.exe
+* Do Change Request Work
+* Pause for interval configured in LoadGen.exe
+* Do Service Request Work
+* Pause for interval configured in LoadGen.exe
+* Do Incident Work again
+
+These are the tasks that are done for each of these "do work" routines:
+
+!! Incident Work
+* Get the number of work items configured in LoadGen.exe using the System.WorkItem.Incident.View.ProjectionType type projection (assigned to and affected user are the only components).  This simulates opening an incident view.  A randomly selected Incident classification is used as the criteria.
+* Randomly select one of the incidents and get it using the System.WorkItem.Incident.ProjectionType type projection.  This simulates getting the full incident object that would be shown in the incident form.
+* Wait the specified interval defined in the “do work pause interval” in LoadGen.exe
+* Change the description to a new value
+* Set the classification to a randomly selected classification.  This ensures that the incident update will trigger a notification and the incident will change from one queue to another.
+* Create a new action log entry (if there are less than 8 action log entries already related to the incident).
+* Change the assigned to person to the loader.exe process login.
+* Wait the specified interval defined in the “do work pause interval” in LoadGen.exe
+* Post the changes to the database.
+
+!! Change Request Work
+* Same as incident except:
+** Don’t create an action log entry (since change request doesn’t have action log support)
+** Add the current loader.exe process login as an affected user
+** Commit the change to the database
+** Wait the specified interval defined in the “do work pause interval” in LoadGen.exe
+** Remove the current loader.exe process login as an affected user
+** Commit the change to the database
+
+!! Service Request Work
+* Same as change request except use related CI relationship type instead of affected user relationship type.
+** Wait the specified interval defined in the “do work pause interval” in LoadGen.exe
+
+!! Problem Work
+* Same as incident work except:
+** Don’t create an action log entry.
+** Query for 5 computer objects.
+** Add them as affected CIs.
+** Commit the change to the database.
+** Remove the computers as affected CIs.
+** Commit the change to the database.
+** Only pause once for the “do work pause interval” configured in LoadGen.exe
+
+! Measuring Performance
+There are two ways to measure performance:
+# Performance Counters
+# Console messages in Loader.exe windows (must display Loader.exe windows to see these messages)
+
+!! Performance Counters
+The LoadGen.exe will create the following performance counters:
+* SCSMPerf\Work Item Creation Interval
+* SCSMPerf\Incident Work Completion Time
+* SCSMPerf\Change Request Work Completion Time
+* SCSMPerf\Problem Work Completion Time
+* SCSMPerf\Service Request Work Completion Time
+* SCSMPerf\Do Work Completion Time
+* SCSMPerf\Incident Query Time
+* SCSMPerf\Get Single Incident
+* SCSMPerf\Update Incident
+
+Each Loader.exe will update these performance counters as it runs depending on what it is configured to do.  The Work Item Creation Interval and ___ Work Completion Time counters will represent the total amount of time to do the work including the configurable sleep intervals between actions.  Thus, these counters may be a large number but they should remain _flat_.  A steadily increasing number here is a bad sign that performance is getting worse and worse.
+
+Incident Query Time, Get Single Incident, and Update Incident should be as close to zero as possible.  Again, a steadily increasing number here is a bad sign that performance is getting worse over time.
+
+!! Console Messages
+When the Loader.exe console windows are showing the console window will display messages periodically.
+* First it will show how long it takes to create an EnterpriseManagementGroup (EMG) which is a connection to the server.  Typically this would take about 1-3 seconds.
+* Next it will show how long it takes to cache everything that the Loader.exe needs.  This is basically a series of queries to the database to get enumeration values, classes, management packs, templates, etc.  This is a one time operation and should take about 3-5 seconds.
+* Repeatedly a console message will show which says 'WI Create Interval: ####' followed by 'Target WI Interval: ###'.  The WI Create Interval should typically be very close to the Target WI Interval.  If the WI Create Interval is significantly more than the Target WI Interval that is a bad sign of performance.
+* Repeatedly, periodically a console message will say something like '# <Work Item Category> in ### seconds.  This number should be as small as possible.  The length of time will depend on the configured number of work items to retrieve.
+* Repeatedly, periodically a console message will say 'Get single <work item class>: ###'.  This is the amount of time to get a single work item advanced projection and should be as small as possible.
+* Repeatedly, periodically a console message will say '<Work Item class> work completed (seconds): ###'. This is the amount of time it took to do a do work routine.  It should be as close as possible to the number indicated in the list below depending on the work item type.  The amount of time will vary depending on the configuration of the Do Work Pause (ms) configuration as follows:
+** Incident Do Work Routine should be 2X the Do Work Pause
+** Change Request Do Work Routine should be 1X the Do Work Pause
+** Service Request Do Work Routine should be 1X the Do Work Pause
+** Problem Do Work Routine should be 1X the Do Work Pause
+
+For example, if the Do Work Pause is configured for 30 seconds the Incident Do Work Time should be something close to 60 seconds.
+
+* Repeatedly, periodically a console message will say 'Do Work Completed (seconds): ###'.  This is the total time to do 2X Incident Do Work Routines, 1X Change Request Do Work Routine, 1X Service Request Do Work Routine, and 1X Problem Do Work Routine.  Thus, if the Do Work Pause is configured for 30 seconds then the total time to do all of a Do Work cycle is 2 * 30 + 1 * 30 + 1* 30 + 1 *30 = 2.5 minutes or 150 seconds.  Thus, you should see the 'Do Work Completed (seconds) number be as close to that 150 seconds as possible.
+
+! How Do I Stop This Thing?
+Once you have clicked Start Load and the Loader.exe processes have started you can stop the Loader.exe processes by doing any of the following:
+* Click the Red X on the window if it is showing.
+* Right click on the Loader window(s) in the Windows task bar and choose Close.
+* Click in the Loader window and hit the 'q' button.
+* If you want to shut down all the processes you can do the following from a PowerShell window:
+Get-Process loader | Stop-Process -Force
+
+! More Features of SCSM Perf Test Harness
+ [Importing Data Via CSV]
+[Using the EnumGen Tool]
